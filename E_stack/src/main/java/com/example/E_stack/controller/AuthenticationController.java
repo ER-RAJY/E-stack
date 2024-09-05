@@ -39,7 +39,7 @@ public class AuthenticationController {
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING= "Authorization";
 
-    @PostMapping("/auth")
+    @PostMapping("/authentication")
     public void createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequestDTO, HttpServletResponse response) throws IOException, JSONException {
         try{
             //authenticate a user by verifying the provided email and password against the configured authentication manager.

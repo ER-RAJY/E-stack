@@ -1,25 +1,27 @@
 package com.example.E_stack.controller;
-
 import com.example.E_stack.dtos.AuthenticationRequest;
 import com.example.E_stack.entities.User;
 import com.example.E_stack.reposeitories.UserRepository;
+import com.example.E_stack.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin("*")
 public class AuthenticationController {
 
     @Autowired
@@ -29,7 +31,7 @@ public class AuthenticationController {
     UserDetailsService userDetailsService;
 
     @Autowired
-    JwtUtil jwtUtil;
+    JwtUtil  jwtUtil;
 
     @Autowired
     private UserRepository userRepository;
@@ -53,7 +55,7 @@ public class AuthenticationController {
         Optional<User> optionalUser = userRepository.findFirstByEmail(userDetails.getUsername());
 
         //Generate the token for the user
-        final String jwt = jwtUtil.generateToken(userDetails.getUsername());
+        final String jwt = jwtUtil.generateToken(userDetails);
 
         if (optionalUser.isPresent()){
             //return json object contain the userId
@@ -61,7 +63,7 @@ public class AuthenticationController {
         }
         //Send in the header
         response.addHeader("Access-Control-Expose-Headers", "Authorization");
-        response.setHeader("Access-Control-Allow-Headers", "Authorization, X-PINGOTHER, X-Requested-With, Content-Type, Accept, X-Custom-header");
+        response.setHeader( "Access-Control-Allow-Headers", "Authorization, X-PINGOTHER, X-Requested-With, Content-Type, Accept, X-Custom-header");
         // exp Authorization : Bearer JWTkjfhgkfjhgf45h3g
         response.setHeader(HEADER_STRING,TOKEN_PREFIX + jwt);
     }

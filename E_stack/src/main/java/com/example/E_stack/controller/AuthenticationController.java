@@ -55,7 +55,7 @@ public class AuthenticationController {
         Optional<User> optionalUser = userRepository.findFirstByEmail(userDetails.getUsername());
 
         //Generate the token for the user
-        final String jwt = jwtUtil.generateToken(userDetails);
+        final String jwt = jwtUtil.generateToken(userDetails.getUsername());
 
         if (optionalUser.isPresent()){
             //return json object contain the userId

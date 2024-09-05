@@ -1,9 +1,16 @@
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <div>
   <mat-toolbar color="primary" class="navbar">
-  <span class="navbar-brand">Stack Exchange</span>
-  <span class="spacer"></span>
-  <button mat-button routerLink="/login" routerLinkActive="active">Login</button>
-  <button mat-button routerLink="/signup" routerLinkActive="active">Signup</button>
+    <span class="navbar-brand">Stack ENAA</span>
+    <span class="spacer"></span>
+    <button mat-button routerLink="/login" routerLinkActive="active">
+      <mat-icon>login</mat-icon>
+      <span>Login</span>
+    </button>
+    <button mat-button routerLink="/signup" routerLinkActive="active">
+      <mat-icon>person_add</mat-icon>
+      <span>Signup</span>
+    </button>
   </mat-toolbar>
-  </div>
+</div>
 <router-outlet></router-outlet>

@@ -3,7 +3,6 @@ package com.example.E_stack.controller;
 import com.example.E_stack.dtos.AuthenticationRequest;
 import com.example.E_stack.entities.User;
 import com.example.E_stack.reposeitories.UserRepository;
-import com.example.E_stack.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -23,17 +23,17 @@ export class AuthService {
     return this.http.post(BASIC_URL+"authentication",loginRequest,
       {observe : "response" })
       .pipe(
-        tap(__=>this.log("User Authentication")),
-        map((res:HttpResponse<any>)=>{
+        tap(__ => this.log("user Authentication")),
+        map((res: HttpResponse<any>) => {
           this.storage.saveUser(res.body);
           const tokenLenght = res.headers.get(AUTH_HEADER)!.length;
           const bearerToken = res.headers.get(AUTH_HEADER)!.substring(7, tokenLenght);
           this.storage.saveToken(bearerToken);
           return res;
         })
-      )
+      );
   }
-  log(message:String):void {
-    console.log("User auth Service "+message)
+  log(message: string) {
+    console.log("User Auth Service : " + message);
   }
 }

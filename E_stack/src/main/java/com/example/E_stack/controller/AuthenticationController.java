@@ -1,9 +1,12 @@
 package com.example.E_stack.controller;
 
-import com.example.E_stack.dtos.AuthentciationResponse;
 import com.example.E_stack.dtos.AuthenticationRequest;
+import com.example.E_stack.entities.User;
+import com.example.E_stack.reposeitories.UserRepository;
 import com.example.E_stack.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -14,29 +17,53 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin("*")
 public class AuthenticationController {
+
     @Autowired
     AuthenticationManager authenticationManager;
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    UserDetailsService userDetailsService;
+
     @Autowired
-    private JwtUtil jwtUtil;
-    @PostMapping("/authentication")
-    public AuthentciationResponse createAutenicationToken(@RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse response) throws IOException {
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword()));
+    JwtUtil jwtUtil;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public static final String TOKEN_PREFIX = "Bearer ";
+    public static final String HEADER_STRING= "Authorization";
+
+    @PostMapping("/auth")
+    public void createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequestDTO, HttpServletResponse response) throws IOException, JSONException {
+        try{
+            //authenticate a user by verifying the provided email and password against the configured authentication manager.
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequestDTO.getEmail(), authenticationRequestDTO.getPassword()));
         }catch (BadCredentialsException e){
-            throw new BadCredentialsException("Invalid email or password");
+            throw new BadCredentialsException("Incorrect Email or password");
         }catch (DisabledException disabledException){
-            response.sendError(HttpServletResponse.SC_NOT_FOUND,("User is not created"));
-            return null;
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "User is not created");
+            return;
         }
-        final UserDetails userDetails =userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
-        final String jwt =  jwtUtil.generateToken(userDetails.getUsername());
-        return new AuthentciationResponse(jwt);
-     }
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequestDTO.getEmail());
+        //Get user by email
+        Optional<User> optionalUser = userRepository.findFirstByEmail(userDetails.getUsername());
+
+        //Generate the token for the user
+        final String jwt = jwtUtil.generateToken(userDetails.getUsername());
+
+        if (optionalUser.isPresent()){
+            //return json object contain the userId
+            response.getWriter().write(new JSONObject().put("userId", optionalUser.get().getId()).toString());
+        }
+        //Send in the header
+        response.addHeader("Access-Control-Expose-Headers", "Authorization");
+        response.setHeader("Access-Control-Allow-Headers", "Authorization, X-PINGOTHER, X-Requested-With, Content-Type, Accept, X-Custom-header");
+        // exp Authorization : Bearer JWTkjfhgkfjhgf45h3g
+        response.setHeader(HEADER_STRING,TOKEN_PREFIX + jwt);
+    }
 }

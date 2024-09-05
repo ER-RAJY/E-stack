@@ -39,18 +39,18 @@ public class AuthenticationController {
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING= "Authorization";
 
-    @PostMapping("/authentication")
-    public void createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequestDTO, HttpServletResponse response) throws IOException, JSONException {
+    @PostMapping("/auth")
+    public void createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse response) throws IOException, JSONException {
         try{
             //authenticate a user by verifying the provided email and password against the configured authentication manager.
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequestDTO.getEmail(), authenticationRequestDTO.getPassword()));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword()));
         }catch (BadCredentialsException e){
             throw new BadCredentialsException("Incorrect Email or password");
         }catch (DisabledException disabledException){
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "User is not created");
             return;
         }
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequestDTO.getEmail());
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
         //Get user by email
         Optional<User> optionalUser = userRepository.findFirstByEmail(userDetails.getUsername());
 

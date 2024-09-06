@@ -1,7 +1,7 @@
 package com.example.E_stack.entities;
 
+import com.example.E_stack.dtos.AnswerDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.stackoverflow.dtos.AnswerDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

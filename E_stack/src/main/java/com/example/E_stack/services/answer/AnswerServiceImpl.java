@@ -1,15 +1,16 @@
 package com.example.E_stack.services.answer;
 
-import com.stackoverflow.dtos.AnswerDto;
-import com.stackoverflow.entities.Answer;
-import com.stackoverflow.entities.Question;
-import com.stackoverflow.entities.User;
-import com.stackoverflow.repositories.AnswerRepository;
-import com.stackoverflow.repositories.QuestionRepository;
-import com.stackoverflow.repositories.UserRepository;
+
+import com.example.E_stack.dtos.AnswerDto;
+import com.example.E_stack.entities.Answer;
+import com.example.E_stack.entities.Question;
+import com.example.E_stack.reposeitories.AnswerRepository;
+import com.example.E_stack.reposeitories.QuestionRepository;
+import com.example.E_stack.reposeitories.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;

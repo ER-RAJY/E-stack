@@ -1,18 +1,18 @@
 package com.example.E_stack.services.question;
 
-import com.stackoverflow.dtos.AllQuestionResponseDto;
-import com.stackoverflow.dtos.AnswerDto;
-import com.stackoverflow.dtos.QuestionDTO;
-import com.stackoverflow.dtos.SingleQuestionDto;
-import com.stackoverflow.entities.Answer;
-import com.stackoverflow.entities.Question;
-import com.stackoverflow.entities.QuestionVote;
-import com.stackoverflow.entities.User;
-import com.stackoverflow.enums.VoteType;
-import com.stackoverflow.repositories.AnswerRepository;
-import com.stackoverflow.repositories.ImageRepository;
-import com.stackoverflow.repositories.QuestionRepository;
-import com.stackoverflow.repositories.UserRepository;
+
+import com.example.E_stack.dtos.AllQuestionResponseDto;
+import com.example.E_stack.dtos.AnswerDto;
+import com.example.E_stack.dtos.QuestionDTO;
+import com.example.E_stack.dtos.SingleQuestionDto;
+import com.example.E_stack.entities.Answer;
+import com.example.E_stack.entities.Question;
+import com.example.E_stack.entities.QuestionVote;
+import com.example.E_stack.entities.User;
+import com.example.E_stack.enums.VoteType;
+import com.example.E_stack.reposeitories.AnswerRepository;
+import com.example.E_stack.reposeitories.QuestionRepository;
+import com.example.E_stack.reposeitories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,8 +40,8 @@ public class QuestionServiceImpl implements  QuestionService{
     @Autowired
     UserRepository userRepository;
 
-    @Autowired
-    ImageRepository imageRepository;
+//    @Autowired
+//    ImageRepository imageRepository;
 
     @Override
     public QuestionDTO addQuestion(QuestionDTO questionDto) {
@@ -82,40 +82,40 @@ public class QuestionServiceImpl implements  QuestionService{
 
     @Override
     public SingleQuestionDto getQuestionById(Long userId, Long questionId) {
-        Optional<Question> optionalQuestion = questionRepository.findById(questionId);
-
-        if(optionalQuestion.isPresent()){
-            //get the question and set it to singleQuestionDto
-            SingleQuestionDto singleQuestionDto = new SingleQuestionDto();
-
-            // vote check
-            Question existingQuestion = optionalQuestion.get();
-            Optional<QuestionVote> optionalQuestionVote = existingQuestion.getQuestionVoteList().stream().filter(
-                    vote -> vote.getUser().getId().equals(userId)
-            ).findFirst();
-            QuestionDTO questionDto = optionalQuestion.get().getQuestionDto();
-            questionDto.setVoted(0);
-            if(optionalQuestionVote.isPresent()){
-                if(optionalQuestionVote.get().getVoteType().equals(VoteType.UPVOTE)){
-                    questionDto.setVoted(1);
-                }else{
-                    questionDto.setVoted(-1);
-                }
-            }
-
-            singleQuestionDto.setQuestionDTO(questionDto);
-
-            //get the question's answers and set it to singleQuestionDto
-            List<AnswerDto> answerDtoList = new ArrayList<>();
-            List<Answer> answerList = answerRepository.findAllByQuestionId(questionId);
-            for (Answer answer: answerList) {
-                AnswerDto answerDto = answer.getAnswerDto();
-                answerDto.setFile(imageRepository.findByAnswer(answer));
-                answerDtoList.add(answerDto);
-            }
-            singleQuestionDto.setAnswerDtoList(answerDtoList);
-            return singleQuestionDto;
-        }
+//        Optional<Question> optionalQuestion = questionRepository.findById(questionId);
+//
+//        if(optionalQuestion.isPresent()){
+//            //get the question and set it to singleQuestionDto
+//            SingleQuestionDto singleQuestionDto = new SingleQuestionDto();
+//
+//            // vote check
+//            Question existingQuestion = optionalQuestion.get();
+//            Optional<QuestionVote> optionalQuestionVote = existingQuestion.getQuestionVoteList().stream().filter(
+//                    vote -> vote.getUser().getId().equals(userId)
+//            ).findFirst();
+//            QuestionDTO questionDto = optionalQuestion.get().getQuestionDto();
+//            questionDto.setVoted(0);
+//            if(optionalQuestionVote.isPresent()){
+//                if(optionalQuestionVote.get().getVoteType().equals(VoteType.UPVOTE)){
+//                    questionDto.setVoted(1);
+//                }else{
+//                    questionDto.setVoted(-1);
+//                }
+//            }
+//
+//            singleQuestionDto.setQuestionDTO(questionDto);
+//
+//            //get the question's answers and set it to singleQuestionDto
+//            List<AnswerDto> answerDtoList = new ArrayList<>();
+//            List<Answer> answerList = answerRepository.findAllByQuestionId(questionId);
+//            for (Answer answer: answerList) {
+//                AnswerDto answerDto = answer.getAnswerDto();
+//                answerDto.setFile(imageRepository.findByAnswer(answer));
+//                answerDtoList.add(answerDto);
+//            }
+//            singleQuestionDto.setAnswerDtoList(answerDtoList);
+//            return singleQuestionDto;
+//        }
         return null;
     }
 

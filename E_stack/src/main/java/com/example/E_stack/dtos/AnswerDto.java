@@ -22,5 +22,4 @@ public class AnswerDto {
 
     private String username;
 
-    private Image file;
 }

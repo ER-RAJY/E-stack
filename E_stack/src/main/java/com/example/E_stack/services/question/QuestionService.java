@@ -1,8 +1,7 @@
 package com.example.E_stack.services.question;
 
-import com.stackoverflow.dtos.AllQuestionResponseDto;
-import com.stackoverflow.dtos.QuestionDTO;
-import com.stackoverflow.dtos.SingleQuestionDto;
+
+import com.example.E_stack.dtos.QuestionDTO;
 
 public interface QuestionService {
     QuestionDTO addQuestion(QuestionDTO questionDto);

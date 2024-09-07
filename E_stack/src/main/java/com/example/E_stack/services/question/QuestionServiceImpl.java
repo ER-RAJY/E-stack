@@ -102,7 +102,6 @@ public class QuestionServiceImpl implements  QuestionService{
 //                    questionDto.setVoted(-1);
 //                }
 //            }
-//
 //            singleQuestionDto.setQuestionDTO(questionDto);
 //
 //            //get the question's answers and set it to singleQuestionDto

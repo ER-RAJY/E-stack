@@ -1,7 +1,9 @@
 package com.example.E_stack.controller;
 
-
-import com.example.E_stack.services.question.QuestionService;
+import com.stackoverflow.dtos.AllQuestionResponseDto;
+import com.stackoverflow.dtos.QuestionDTO;
+import com.stackoverflow.dtos.SingleQuestionDto;
+import com.stackoverflow.services.question.QuestionService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

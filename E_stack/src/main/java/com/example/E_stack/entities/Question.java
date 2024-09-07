@@ -1,5 +1,7 @@
 package com.example.E_stack.entities;
 
+import com.example.E_stack.dtos.QuestionDTO;
+import com.example.E_stack.entities.QuestionVote;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -37,5 +39,18 @@ public class Question {
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<QuestionVote> questionVoteList;
+
+    public QuestionDTO getQuestionDto(){
+        QuestionDTO questionDTO = new QuestionDTO();
+        questionDTO.setId(id);
+        questionDTO.setTitle(title);
+        questionDTO.setBody(body);
+        questionDTO.setCreatedDate(createdDate);
+        questionDTO.setUserId(user.getId());
+        questionDTO.setTags(tags);
+        questionDTO.setVoteCount(voteCount);
+        questionDTO.setUsername(user.getName());
+        return questionDTO;
+    }
 
 }

@@ -1,11 +1,10 @@
-import {HttpClient, HttpResponse} from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import {map, Observable, tap} from 'rxjs';
-import {StorageService} from "../storage-service/storage.service";
-
+import { map, Observable, tap } from 'rxjs';
+import { StorageService } from "../storage-service/storage.service";
 
 const BASIC_URL = 'http://localhost:8080/';
-export  const AUTH_HEADER = "autherization";
+export const AUTH_HEADER = "Authorization"; // Fixed typo
 
 @Injectable({
   providedIn: 'root'
@@ -13,26 +12,34 @@ export  const AUTH_HEADER = "autherization";
 export class AuthService {
 
   constructor(
-    private http : HttpClient,
-    private storage : StorageService
-  ){}
-  sigunp(signupRequest:any):Observable<any>{
-    return this.http.post(BASIC_URL+"signup",signupRequest)
+    private http: HttpClient,
+    private storage: StorageService
+  ) { }
+
+  sigunp(signupRequest: any): Observable<any> {
+    return this.http.post(BASIC_URL + "signup", signupRequest);
   }
-  login(loginRequest:any):Observable<any>{
-    return this.http.post(BASIC_URL+"authentication",loginRequest,
-      {observe : "response" })
+
+  login(loginRequest: any): Observable<any> {
+    return this.http.post(BASIC_URL + "authentication", loginRequest,
+      { observe: "response" })
       .pipe(
-        tap(__ => this.log("user Authentication")),
+        tap(() => this.log("User authenticated")),
         map((res: HttpResponse<any>) => {
           this.storage.saveUser(res.body);
-          const tokenLenght = res.headers.get(AUTH_HEADER)!.length;
-          const bearerToken = res.headers.get(AUTH_HEADER)!.substring(7, tokenLenght);
-          this.storage.saveToken(bearerToken);
+          const authHeader = res.headers.get(AUTH_HEADER);
+          if (authHeader) {
+            const tokenLength = authHeader.length;
+            const bearerToken = authHeader.substring(7, tokenLength);
+            this.storage.saveToken(bearerToken);
+          } else {
+            console.error("Authorization header not found");
+          }
           return res;
         })
       );
   }
+
   log(message: string) {
     console.log("User Auth Service : " + message);
   }

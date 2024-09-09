@@ -1,5 +1,5 @@
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<div>
+<!-- Show when user is not logged in -->
+<div *ngIf="!isUserLoggedIn">
   <mat-toolbar color="primary" class="navbar">
     <span class="navbar-brand">Stack ENAA</span>
     <span class="spacer"></span>
@@ -13,4 +13,21 @@
     </button>
   </mat-toolbar>
 </div>
+
+<!-- Show when user is logged in -->
+<div *ngIf="isUserLoggedIn">
+  <mat-toolbar color="primary" class="navbar">
+    <span class="navbar-brand">Stack ENAA</span>
+    <span class="spacer"></span>
+    <button mat-button routerLink="/user/dashboard" routerLinkActive="active">
+      <mat-icon>dashboard</mat-icon>
+      <span>Dashboard</span>
+    </button>
+    <button mat-button (click)="logout()" routerLinkActive="active">
+      <mat-icon>logout</mat-icon>
+      <span>Logout</span>
+    </button>
+  </mat-toolbar>
+</div>
+
 <router-outlet></router-outlet>

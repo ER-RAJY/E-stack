@@ -18,4 +18,18 @@ export class StorageService {
     window.localStorage.removeItem(TOKEN);
     window.localStorage.setItem(TOKEN,token);
   }
+   static getToken():string{
+      // @ts-ignore
+     return  localStorage.getItem(TOKEN);
+   }
+   static isUserLoggedIn(){
+    if(this.getToken()== null ){
+      return false;
+    }
+    return  true;
+  }
+  static logout(){
+    window.localStorage.removeItem(TOKEN);
+    window.localStorage.removeItem(USER);
+  }
 }

@@ -11,6 +11,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 })
 export class LoginComponent {
   loginForm!: FormGroup;
+  hidePassword = true;
 
   constructor(
     private service: AuthService,
@@ -21,10 +22,23 @@ export class LoginComponent {
 
   ngOnInit() {
     this.loginForm = this.fb.group({
-      email: ['', Validators.required],
+      email: ['',[Validators.required, Validators.email]],
       password: ['', Validators.required],
     });
   }
+
+
+  onSubmit() {
+    if (this.loginForm.valid) {
+      // Handle login logic here
+      console.log(this.loginForm.value);
+    }
+  }
+
+  togglePasswordVisibility() {
+    this.hidePassword = !this.hidePassword;
+  }
+
 
   login() {
     console.log(this.loginForm.value);

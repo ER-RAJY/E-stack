@@ -1,7 +1,7 @@
 <!-- Show when user is not logged in -->
 <div *ngIf="!isUserLoggedIn">
   <mat-toolbar color="primary" class="navbar">
-    <span class="navbar-brand">Stack ENAA</span>
+    <span class="navbar-brand">STACK ENAA</span>
     <span class="spacer"></span>
     <button mat-button routerLink="/login" routerLinkActive="active">
       <mat-icon>login</mat-icon>
@@ -22,6 +22,10 @@
     <button mat-button routerLink="/user/dashboard" routerLinkActive="active">
       <mat-icon>dashboard</mat-icon>
       <span>Dashboard</span>
+    </button>
+    <button mat-button routerLink="/user/question" routerLinkActive="active">
+    <!-- <mat-icon>Question</mat-icon>-->
+      <span>Question</span>
     </button>
     <button mat-button (click)="logout()" routerLinkActive="active">
       <mat-icon>logout</mat-icon>

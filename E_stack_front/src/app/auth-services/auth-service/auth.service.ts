@@ -4,7 +4,7 @@ import { map, Observable, tap } from 'rxjs';
 import { StorageService } from "../storage-service/storage.service";
 
 const BASIC_URL = 'http://localhost:8080/';
-export const AUTH_HEADER = "Authorization"; // Fixed typo
+export const AUTH_HEADER = "Authorization";
 
 @Injectable({
   providedIn: 'root'

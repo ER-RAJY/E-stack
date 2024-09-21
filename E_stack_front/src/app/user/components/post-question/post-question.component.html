@@ -1,0 +1,31 @@
+<div class="post-question-form">
+  <h2>Post Question</h2>
+  <form [formGroup]="validateForm" (ngSubmit)="postQuestion()">
+    <mat-form-field appearance="outline">
+      <input matInput placeholder="What is Java?" formControlName="title">
+      <mat-icon matSuffix *ngIf="validateForm.get('title')?.valid">check_circle</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <textarea matInput rows="3" placeholder="I want to know about the Java." formControlName="body"></textarea>
+      <mat-icon matSuffix *ngIf="validateForm.get('body')?.valid">check_circle</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-chip-grid #chipGrid aria-label="Enter tags" formControlName="tags">
+        <mat-chip-row *ngFor="let tag of tags" (removed)="remove(tag)">
+          {{tag.name}}
+          <button matChipRemove>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+        <input placeholder="New tag..."
+               [matChipInputFor]="chipGrid"
+               (matChipInputTokenEnd)="add($event)">
+      </mat-chip-grid>
+      <mat-icon matSuffix *ngIf="validateForm.get('tags')?.valid">check_circle</mat-icon>
+    </mat-form-field>
+
+    <button type="submit" [disabled]="validateForm.invalid">Post Question</button>
+  </form>
+</div>

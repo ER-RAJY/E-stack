@@ -9,12 +9,16 @@ import {MatInputModule} from "@angular/material/input";
 import {MatChipsModule} from "@angular/material/chips";
 import {MatIconModule} from "@angular/material/icon";
 import {ReactiveFormsModule} from "@angular/forms";
+import {MatLegacyPaginatorModule} from "@angular/material/legacy-paginator";
+import {MatCardModule} from "@angular/material/card";
+import { ViewsQuestionComponent } from './components/views-question/views-question.component';
 
 
 @NgModule({
   declarations: [
     DashboardComponent,
-    PostQuestionComponent
+    PostQuestionComponent,
+    ViewsQuestionComponent
   ],
   imports: [
     CommonModule,
@@ -23,7 +27,9 @@ import {ReactiveFormsModule} from "@angular/forms";
     MatInputModule,
     MatChipsModule,
     MatIconModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatLegacyPaginatorModule,
+    MatCardModule
   ]
 })
 export class UserModule { }

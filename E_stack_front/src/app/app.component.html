@@ -1,7 +1,7 @@
 <!-- Show when user is not logged in -->
 <div *ngIf="!isUserLoggedIn">
   <mat-toolbar color="primary" class="navbar">
-    <span class="navbar-brand">STACK ENAA</span>
+    <span class="navbar-brand"> <img src="assets/img/enaa-favicon.png"> STACK </span>
     <span class="spacer"></span>
     <button mat-button routerLink="/login" routerLinkActive="active">
       <mat-icon>login</mat-icon>
@@ -17,7 +17,7 @@
 <!-- Show when user is logged in -->
 <div *ngIf="isUserLoggedIn">
   <mat-toolbar color="primary" class="navbar">
-    <span class="navbar-brand">Stack ENAA</span>
+    <span class="navbar-brand"> <img src="assets/img/enaa-favicon.png"> STACK </span>
     <span class="spacer"></span>
     <button mat-button routerLink="/user/dashboard" routerLinkActive="active">
       <mat-icon>dashboard</mat-icon>

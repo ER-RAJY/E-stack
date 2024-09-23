@@ -1,0 +1,20 @@
+<ng-template #questionList>
+  <div class="child" >
+    <h2 class="question-title">
+      <a routerLink="/user/question/{{question.id}}">{{question.title}}</a>
+    </h2>
+    <div class="question-content">
+      <p>{{question.body}}</p>
+      <div class="tags-container">
+        <mat-chip-listbox>
+          <mat-chip color="primary" *ngFor="let tag of question.tags">{{tag}} </mat-chip>
+        </mat-chip-listbox>
+      </div>
+      <hr>
+<!--      <h5>-->
+<!--        Posted By: <b>{{question.username}}</b> - -->
+<!--        Posted On: <b>{{question.createdDate | date: ' dd , MM , YYYY '}}</b>-->
+<!--      </h5>-->
+    </div>
+  </div>
+</ng-template>

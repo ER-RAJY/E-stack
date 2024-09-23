@@ -10,12 +10,14 @@ body {
 
 /* Navbar styles */
 .navbar {
-  background: linear-gradient(135deg, #3f51b5 0%, #2196f3 100%);
+
+  background: #8F5DE9;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  height: 52px;
 }
 
 .navbar-brand {
-  font-size: 24px;
+  font-size: 21px;
   font-weight: 700;
   color: white;
   text-decoration: none;
@@ -23,10 +25,11 @@ body {
   align-items: center;
 }
 
-.navbar-brand::before {
- //content: '❓';
-  margin-right: 8px;
-  font-size: 28px;
+/* Favicon styling */
+.navbar-brand img {
+  height: 30px;
+  width: auto;
+  margin-right: 10px;
 }
 
 .spacer {
@@ -37,10 +40,16 @@ body {
   margin-left: 8px;
   text-transform: uppercase;
   font-weight: 500;
+  display: flex;
+  align-items: center;
 }
 
 .navbar button.active {
   background-color: rgba(255, 255, 255, 0.2);
+}
+
+.navbar button mat-icon {
+  margin-right: 4px;
 }
 
 /* Router outlet container */
@@ -52,6 +61,32 @@ router-outlet + * {
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom styles for mat-card */
+mat-card {
+  margin-bottom: 20px;
+  border-left: 4px solid #3f51b5;
+}
+
+mat-card-title {
+  color: #3f51b5;
+}
+
+mat-card-subtitle {
+  color: #666;
+}
+
+/* Custom styles for mat-button */
+.mat-button.mat-primary {
+  color: #3f51b5;
+}
+
+/* Add a subtle hover effect to cards */
+mat-card:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
 }
 
 /* Responsive adjustments */
@@ -70,50 +105,6 @@ router-outlet + * {
   }
 }
 
-/* Custom styles for mat-card (assuming you'll use it for questions/answers) */
-mat-card {
-  margin-bottom: 20px;
-  border-left: 4px solid #3f51b5;
-}
-
-mat-card-title {
-  color: #3f51b5;
-}
-
-mat-card-subtitle {
-  color: #666;
-}
-
-/* Custom styles for mat-button (for actions like upvote, comment, etc.) */
-.mat-button.mat-primary {
-  color: #3f51b5;
-}
-
-/* Add a subtle hover effect to cards */
-mat-card:hover {
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
-  transition: all 0.3s ease;
-}/* Styles for Social Q&A Website Template */
-
-/* ... (previous styles remain the same) ... */
-
-/* Updated styles for navbar buttons with icons */
-.navbar button {
-  margin-left: 8px;
-  text-transform: uppercase;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-}
-
-.navbar button mat-icon {
-  margin-right: 4px;
-}
-
-/* ... (rest of the previous styles remain the same) ... */
-
-/* Responsive adjustments for icon buttons */
 @media (max-width: 400px) {
   .navbar button span {
     display: none;

@@ -1,19 +1,27 @@
 <div class="login-container">
   <div class="login-card">
     <div class="login-form">
-      <img src="assets/img/logo.png"/>
+      <img src="assets/img/logo.png" />
       <h2>Log in</h2>
       <p>Enter your account details</p>
 
-      <!-- Add both (ngSubmit)="onSubmit()" and login() to handle submission -->
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit(); login()">
-        <mat-form-field class="form-input">
-          <input matInput placeholder="Email" formControlName="email" name="email" type="email" required>
+      <form [formGroup]="loginForm" (ngSubmit)="login()">
+        <mat-form-field class="form-input" appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput placeholder="Email" formControlName="email" type="email" required />
         </mat-form-field>
-        <mat-form-field class="form-input">
-          <input matInput placeholder="Password" name="password" formControlName="password" type="password" required>
-          <mat-icon matSuffix>visibility</mat-icon>
+
+        <mat-form-field class="form-input" appearance="outline">
+          <mat-label>Password</mat-label>
+          <input matInput
+                 [type]="hidePassword ? 'password' : 'text'"
+                 formControlName="password"
+                 required />
+          <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" type="button">
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
         </mat-form-field>
+
         <a href="#" class="forgot-password">Forgot Password?</a>
         <button mat-flat-button color="primary" class="login-button" type="submit">Log in</button>
       </form>

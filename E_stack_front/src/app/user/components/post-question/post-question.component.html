@@ -1,17 +1,27 @@
 <div class="post-question-form">
-  <h2>Post Question</h2>
+  <h2>Ask Your Question</h2>
   <form [formGroup]="validateForm" (ngSubmit)="postQuestion()">
+
     <mat-form-field appearance="outline">
-      <input matInput placeholder="What is Java?" formControlName="title">
+      <mat-label>Question Title</mat-label>
+      <input matInput placeholder="Enter the question title" formControlName="title">
+      <mat-error *ngIf="validateForm.get('title')?.invalid && validateForm.get('title')?.touched">
+        Title is required
+      </mat-error>
       <mat-icon matSuffix *ngIf="validateForm.get('title')?.valid">check_circle</mat-icon>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <textarea matInput rows="3" placeholder="I want to know about the Java." formControlName="body"></textarea>
+      <mat-label>Details</mat-label>
+      <textarea matInput rows="4" placeholder="Describe your question in detail" formControlName="body"></textarea>
+      <mat-error *ngIf="validateForm.get('body')?.invalid && validateForm.get('body')?.touched">
+        Please provide more details
+      </mat-error>
       <mat-icon matSuffix *ngIf="validateForm.get('body')?.valid">check_circle</mat-icon>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
+      <mat-label>Tags</mat-label>
       <mat-chip-grid #chipGrid aria-label="Enter tags" formControlName="tags">
         <mat-chip-row *ngFor="let tag of tags" (removed)="remove(tag)">
           {{tag.name}}
@@ -19,13 +29,16 @@
             <mat-icon>cancel</mat-icon>
           </button>
         </mat-chip-row>
-        <input placeholder="New tag..."
+        <input placeholder="Add a tag"
                [matChipInputFor]="chipGrid"
                (matChipInputTokenEnd)="add($event)">
       </mat-chip-grid>
+      <mat-error *ngIf="validateForm.get('tags')?.invalid && validateForm.get('tags')?.touched">
+        At least one tag is required
+      </mat-error>
       <mat-icon matSuffix *ngIf="validateForm.get('tags')?.valid">check_circle</mat-icon>
     </mat-form-field>
 
-    <button type="submit" [disabled]="validateForm.invalid">Post Question</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="validateForm.invalid">Post Question</button>
   </form>
 </div>

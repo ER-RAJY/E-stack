@@ -15,7 +15,7 @@ export class QuestionService {
   postQuestion(questionDto: any): Observable<any> {
     console.log("questionDto", questionDto);
     questionDto.userId = StorageService.getUserId();
-    return this.http.post(`${BASIC_URL}api/question`, questionDto, {
+    return this.http.post(`${BASIC_URL}api/questions`, questionDto, {
       headers: this.createAuthorizationHeader()
     });
   }
@@ -26,14 +26,25 @@ export class QuestionService {
     });
   }
 
-  // In QuestionService
   getQuestionById(questionId: number): Observable<any> {
     const token = StorageService.getToken();
     console.log('Token being used:', token);
-    return this.http.get<any>(`${BASIC_URL}api/question/${StorageService.getUserId()}/${questionId}`, {
+    return this.http.get<any>(`${BASIC_URL}api/questions/question/${StorageService.getUserId()}/${questionId}`, {
       headers: this.createAuthorizationHeader()
     });
   }
+
+  getQuestionsByUserId(pageNumber: number): Observable<any> {
+    return this.http.get<[]>(`${BASIC_URL}api/questions/user/${StorageService.getUserId()}/${pageNumber}`,
+      { headers: this.createAuthorizationHeader() });
+  }
+
+
+  addVoteToQuestion(VoteQuestionDto: any): Observable<any> {
+    return this.http.post<[]>(BASIC_URL + 'vote', VoteQuestionDto,
+      { headers: this.createAuthorizationHeader() })
+  }
+
   createAuthorizationHeader() {
     let authHeaders = new HttpHeaders();
     return authHeaders.set(

@@ -31,14 +31,15 @@ public class QuestionController {
         return ResponseEntity.ok(allQuestionResponseDto);
     }
 
-    @GetMapping("/{userId}/{questionId}")
+    @GetMapping("/question/{userId}/{questionId}")
     public ResponseEntity<?> getQuestionById(@PathVariable Long userId, @PathVariable Long questionId) {
         SingleQuestionDto singleQuestionDto = questionService.getQuestionById(userId, questionId);
         if (singleQuestionDto == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Question not found");
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(singleQuestionDto);
     }
+
 
     @GetMapping("/user/{userId}/{pageNumber}")
     public ResponseEntity<AllQuestionResponseDto> getQuestionsByUserId(@PathVariable Long userId, @PathVariable int pageNumber) {

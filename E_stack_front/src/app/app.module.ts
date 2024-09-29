@@ -16,7 +16,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
-import {MatCheckboxModule} from "@angular/material/checkbox"; // Add this line
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 @NgModule({
   declarations: [
@@ -39,7 +39,8 @@ import {MatCheckboxModule} from "@angular/material/checkbox"; // Add this line
     MatSnackBarModule,
     MatIconModule,
     MatCheckboxModule,
-    // Add this line
+
+
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,5 +1,6 @@
 package com.example.E_stack.dtos;
 
+import com.example.E_stack.entities.Image;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,5 +22,6 @@ public class AnswerDto {
     private Long userId;
 
     private String username;
+    private Image file;
 
 }

@@ -70,7 +70,7 @@ export class PostQuestionComponent {
   constructor(private service : QuestionService,
               private formBuilder: FormBuilder,
               private snackBar: MatSnackBar,
-              ) { }
+  ) { }
   ngOnInit() {
     this.validateForm = this.formBuilder.group({
       title: ['', Validators.required],

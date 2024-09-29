@@ -11,6 +11,7 @@ import com.example.E_stack.entities.QuestionVote;
 import com.example.E_stack.entities.User;
 import com.example.E_stack.enums.VoteType;
 import com.example.E_stack.reposeitories.AnswerRepository;
+import com.example.E_stack.reposeitories.ImageRepository;
 import com.example.E_stack.reposeitories.QuestionRepository;
 import com.example.E_stack.reposeitories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +41,8 @@ public class QuestionServiceImpl implements  QuestionService{
     @Autowired
     UserRepository userRepository;
 
-//    @Autowired
-//    ImageRepository imageRepository;
+    @Autowired
+    ImageRepository imageRepository;
 
     @Override
     public QuestionDTO addQuestion(QuestionDTO questionDto) {
@@ -82,39 +83,40 @@ public class QuestionServiceImpl implements  QuestionService{
 
     @Override
     public SingleQuestionDto getQuestionById(Long userId, Long questionId) {
-//        Optional<Question> optionalQuestion = questionRepository.findById(questionId);
-//
-//        if(optionalQuestion.isPresent()){
-//            //get the question and set it to singleQuestionDto
-//            SingleQuestionDto singleQuestionDto = new SingleQuestionDto();
-//
-//            // vote check
-//            Question existingQuestion = optionalQuestion.get();
-//            Optional<QuestionVote> optionalQuestionVote = existingQuestion.getQuestionVoteList().stream().filter(
-//                    vote -> vote.getUser().getId().equals(userId)
-//            ).findFirst();
-//            QuestionDTO questionDto = optionalQuestion.get().getQuestionDto();
-//            questionDto.setVoted(0);
-//            if(optionalQuestionVote.isPresent()){
-//                if(optionalQuestionVote.get().getVoteType().equals(VoteType.UPVOTE)){
-//                    questionDto.setVoted(1);
-//                }else{
-//                    questionDto.setVoted(-1);
-//                }
-//            }
-//            singleQuestionDto.setQuestionDTO(questionDto);
-//
-//            //get the question's answers and set it to singleQuestionDto
-//            List<AnswerDto> answerDtoList = new ArrayList<>();
-//            List<Answer> answerList = answerRepository.findAllByQuestionId(questionId);
-//            for (Answer answer: answerList) {
-//                AnswerDto answerDto = answer.getAnswerDto();
-//                answerDto.setFile(imageRepository.findByAnswer(answer));
-//                answerDtoList.add(answerDto);
-//            }
-//            singleQuestionDto.setAnswerDtoList(answerDtoList);
-//            return singleQuestionDto;
-//        }
+        Optional<Question> optionalQuestion = questionRepository.findById(questionId);
+
+        if(optionalQuestion.isPresent()){
+            //get the question and set it to singleQuestionDto
+            SingleQuestionDto singleQuestionDto = new SingleQuestionDto();
+
+            // vote check
+            Question existingQuestion = optionalQuestion.get();
+            Optional<QuestionVote> optionalQuestionVote = existingQuestion.getQuestionVoteList().stream().filter(
+                    vote -> vote.getUser().getId().equals(userId)
+            ).findFirst();
+            QuestionDTO questionDto = optionalQuestion.get().getQuestionDto();
+            questionDto.setVoted(0);
+            if(optionalQuestionVote.isPresent()){
+                if(optionalQuestionVote.get().getVoteType().equals(VoteType.UPVOTE)){
+                    questionDto.setVoted(1);
+                }else{
+                    questionDto.setVoted(-1);
+                }
+            }
+
+            singleQuestionDto.setQuestionDTO(questionDto);
+
+            //get the question's answers and set it to singleQuestionDto
+            List<AnswerDto> answerDtoList = new ArrayList<>();
+            List<Answer> answerList = answerRepository.findAllByQuestionId(questionId);
+            for (Answer answer: answerList) {
+                AnswerDto answerDto = answer.getAnswerDto();
+                answerDto.setFile(imageRepository.findByAnswer(answer));
+                answerDtoList.add(answerDto);
+            }
+            singleQuestionDto.setAnswerDtoList(answerDtoList);
+            return singleQuestionDto;
+        }
         return null;
     }
 

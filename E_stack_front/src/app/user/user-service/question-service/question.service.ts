@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { StorageService } from "../../../auth-services/storage-service/storage.service";
 import { Observable } from "rxjs";
 
-const BASIC_URL = "http://localhost:8080/";
+const BASIC_URL = "http://localhost:8080/api/";
 
 @Injectable({
   providedIn: 'root'
@@ -13,42 +13,37 @@ export class QuestionService {
   constructor(private http: HttpClient) { }
 
   postQuestion(questionDto: any): Observable<any> {
-    console.log("questionDto", questionDto);
     questionDto.userId = StorageService.getUserId();
-    return this.http.post(`${BASIC_URL}api/questions`, questionDto, {
-      headers: this.createAuthorizationHeader()
-    });
+    console.log("questionDto", questionDto);
+    return this.http.post(BASIC_URL + 'question', questionDto,
+      { headers: this.createAuthorizationHeadere() })
   }
 
   getAllQuestions(pageNumber: number): Observable<any> {
-    return this.http.get<[]>(`${BASIC_URL}api/questions/${pageNumber}`, {
-      headers: this.createAuthorizationHeader()
-    });
+    return this.http.get<[]>(BASIC_URL + `questions/${pageNumber}`,
+      { headers: this.createAuthorizationHeadere() });
   }
 
   getQuestionById(questionId: number): Observable<any> {
-    const token = StorageService.getToken();
-    console.log('Token being used:', token);
-    return this.http.get<any>(`${BASIC_URL}api/questions/question/${StorageService.getUserId()}/${questionId}`, {
-      headers: this.createAuthorizationHeader()
-    });
+    return this.http.get<any>(BASIC_URL + `question/${StorageService.getUserId()}/${questionId}`,
+      { headers: this.createAuthorizationHeadere() });
   }
 
   getQuestionsByUserId(pageNumber: number): Observable<any> {
-    return this.http.get<[]>(`${BASIC_URL}api/questions/user/${StorageService.getUserId()}/${pageNumber}`,
-      { headers: this.createAuthorizationHeader() });
+    return this.http.get<[]>(BASIC_URL + `questions/${StorageService.getUserId()}/${pageNumber}`,
+      { headers: this.createAuthorizationHeadere() });
   }
 
 
   addVoteToQuestion(VoteQuestionDto: any): Observable<any> {
     return this.http.post<[]>(BASIC_URL + 'vote', VoteQuestionDto,
-      { headers: this.createAuthorizationHeader() })
+      { headers: this.createAuthorizationHeadere() })
   }
 
-  createAuthorizationHeader() {
+  createAuthorizationHeadere() {
     let authHeaders = new HttpHeaders();
     return authHeaders.set(
       'Authorization', 'Bearer ' + StorageService.getToken()
-    );
+    )
   }
 }

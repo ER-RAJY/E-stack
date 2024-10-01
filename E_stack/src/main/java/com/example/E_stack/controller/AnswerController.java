@@ -21,15 +21,16 @@ public class AnswerController {
 
     @Autowired
     AnswerService answerService;
-
     @PostMapping
     public ResponseEntity<?> addAnswer(@RequestBody AnswerDto answerDto){
-        AnswerDto createdAnswerDto = answerService.postAnswer(answerDto);
-        if (createdAnswerDto == null){
-            return new ResponseEntity<>("Something went wrong.", HttpStatus.BAD_REQUEST);
+        try {
+            AnswerDto createdAnswerDto = answerService.postAnswer(answerDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdAnswerDto);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdAnswerDto);
     }
+
 
 
 }

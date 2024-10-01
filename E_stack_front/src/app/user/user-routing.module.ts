@@ -9,7 +9,7 @@ import {GetQuestionsByUseridComponent} from "./components/get-questions-by-useri
 const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent, canActivate: [UserGuard] },
   { path: 'question', component: PostQuestionComponent },
-  { path: 'question/:questionId', component: ViewsQuestionComponent }, // Corrected here
+  { path: 'question/:questionId', component: ViewsQuestionComponent },
   { path: "my_questions", component: GetQuestionsByUseridComponent, canActivate: [UserGuard] }
 ];
 

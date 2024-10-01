@@ -16,29 +16,29 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Answer {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; // ID of the answer
 
     @Lob
     @Column(name = "body", length = 512)
-    private String body;
+    private String body; // Content of the answer
 
-    private Date createdDate;
+    private Date createdDate; // Date when the answer was created
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private User user;
+    private User user; // User who posted the answer
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "question_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private Question question;
+    private Question question; // Question to which the answer belongs
 
+    // Convert Answer entity to AnswerDto
     public AnswerDto getAnswerDto() {
         AnswerDto answerDto = new AnswerDto();
         answerDto.setId(id);
@@ -47,6 +47,6 @@ public class Answer {
         answerDto.setQuestionId(question.getId());
         answerDto.setUsername(user.getName());
         answerDto.setCreatedDate(createdDate);
-    return answerDto;
+        return answerDto;
     }
 }

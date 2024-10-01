@@ -12,5 +12,5 @@ import java.util.List;
 public class AllQuestionResponseDto {
     private List<QuestionDTO> questionDTOList;
     private Integer totalPages;
-    private Integer pageNumber; //Current page
+    private Integer pageNumber;
 }

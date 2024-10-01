@@ -53,6 +53,8 @@ export class ViewsQuestionComponent implements OnInit {
     data.userId = StorageService.getUserId();
     this.formData.append('multipartFile', this.selectedFile!);
 
+    console.log("Sending AnswerDto:", data); // سجل البيانات لي غادي ترسلها
+
     this.answerService.postAnswer(data).subscribe(
       (res: { id: number | null; }) => {
         if (res.id != null) {
@@ -79,6 +81,7 @@ export class ViewsQuestionComponent implements OnInit {
     );
     this.validateForm.reset();
   }
+
 
   addVote(voteType: string, voted: number) {
 

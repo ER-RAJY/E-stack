@@ -5,6 +5,7 @@ import com.example.E_stack.entities.Answer;
 import com.example.E_stack.entities.Image;
 import com.example.E_stack.reposeitories.AnswerRepository;
 import com.example.E_stack.reposeitories.ImageRepository;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,12 +18,11 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class ImageServiceImp implements ImageService{
 
-    @Autowired
     private ImageRepository imageRepository;
 
-    @Autowired
     private AnswerRepository answerRepository;
 
     @Override

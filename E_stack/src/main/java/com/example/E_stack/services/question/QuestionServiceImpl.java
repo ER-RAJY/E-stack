@@ -1,6 +1,5 @@
 package com.example.E_stack.services.question;
 
-
 import com.example.E_stack.dtos.AllQuestionResponseDto;
 import com.example.E_stack.dtos.AnswerDto;
 import com.example.E_stack.dtos.QuestionDTO;
@@ -122,14 +121,20 @@ public class QuestionServiceImpl implements  QuestionService{
 
     @Override
     public AllQuestionResponseDto getAllQuestionsByUserId(Long userId, int pageNumber) {
-        Pageable paging = PageRequest.of(pageNumber, SEARCH_RESULT_PER_PAGE);
-        Page<Question> questionsPage =  questionRepository.findAllByUserId(userId, paging);
+        try {
+            Pageable paging = PageRequest.of(pageNumber, SEARCH_RESULT_PER_PAGE);
+            Page<Question> questionsPage =  questionRepository.findAllByUserId(userId, paging);
 
-        AllQuestionResponseDto allQuestionResponseDto = new AllQuestionResponseDto();
+            AllQuestionResponseDto allQuestionResponseDto = new AllQuestionResponseDto();
 
-        allQuestionResponseDto.setQuestionDTOList(questionsPage.getContent().stream().map(Question::getQuestionDto).collect(Collectors.toList()));
-        allQuestionResponseDto.setPageNumber(questionsPage.getPageable().getPageNumber());
-        allQuestionResponseDto.setTotalPages(questionsPage.getTotalPages());
-        return allQuestionResponseDto;
+            allQuestionResponseDto.setQuestionDTOList(questionsPage.getContent().stream().map(Question::getQuestionDto).collect(Collectors.toList()));
+            allQuestionResponseDto.setPageNumber(questionsPage.getPageable().getPageNumber());
+            allQuestionResponseDto.setTotalPages(questionsPage.getTotalPages());
+            return allQuestionResponseDto;
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Log the error or handle it appropriately
+            throw new RuntimeException("Error fetching questions for user: " + e.getMessage(), e);
+        }
     }
 }

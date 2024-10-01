@@ -18,35 +18,31 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-@NoArgsConstructor
-public class AnswerServiceImpl implements AnswerService{
-    @Autowired
-    AnswerRepository answerRepository;
+public class AnswerServiceImpl implements AnswerService {
 
-    @Autowired
-    QuestionRepository questionRepository;
-
-    @Autowired
-    UserRepository userRepository;
+    private final AnswerRepository answerRepository;
+    private final QuestionRepository questionRepository;
+    private final UserRepository userRepository;
 
     @Override
     public AnswerDto postAnswer(AnswerDto answerDto) {
         Optional<User> optionalUser = userRepository.findById(answerDto.getUserId());
         Optional<Question> optionalQuestion = questionRepository.findById(answerDto.getQuestionId());
-        if (optionalUser.isPresent() && optionalQuestion.isPresent()){
+
+        if (optionalUser.isPresent() && optionalQuestion.isPresent()) {
             Answer answer = new Answer();
             answer.setBody(answerDto.getBody());
-            answer.setCreatedDate(new Date());
+            answer.setCreatedDate(new Date()); // Consider using @PrePersist in the Answer entity
             answer.setQuestion(optionalQuestion.get());
             answer.setUser(optionalUser.get());
 
             Answer createdAnswer = answerRepository.save(answer);
 
-            AnswerDto createdAnswerDto = new AnswerDto();
-            createdAnswerDto.setId(createdAnswer.getId());
-
-            return  createdAnswerDto;
+            // Convert the created Answer entity to AnswerDto
+            return createdAnswer.getAnswerDto(); // Assuming you have a getAnswerDto() method in Answer entity
         }
-        return null;
+
+        // Consider throwing an exception instead of returning null
+        throw new RuntimeException("User or Question not found");
     }
 }

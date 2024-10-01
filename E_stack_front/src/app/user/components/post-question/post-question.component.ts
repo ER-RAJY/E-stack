@@ -80,15 +80,21 @@ export class PostQuestionComponent {
   }
 
   postQuestion(){
-    console.log(this.validateForm.value)
-    this.service.postQuestion(this.validateForm.value).subscribe((res)=>{
-      console.log(res);
-      if(res.id != null ){
-        this.snackBar.open("Qestion posted successfuly!","close",{duration:5000});
-      }else{
-        this.snackBar.open("Something went wrong!","close",{duration:5000});
+    console.log(this.validateForm.value);
+    this.service.postQuestion(this.validateForm.value).subscribe({
+      next: (res) => {
+        console.log(res);
+        if(res.id != null ){
+          this.snackBar.open("Question posted successfully!", "close", {duration: 5000});
+        } else {
+          this.snackBar.open("Something went wrong!", "close", {duration: 5000});
+        }
+      },
+      error: (err) => {
+        console.error('Error posting question:', err);
+        this.snackBar.open("Failed to post question. Please try again.", "close", {duration: 5000});
       }
-    })
-
+    });
   }
+
 }

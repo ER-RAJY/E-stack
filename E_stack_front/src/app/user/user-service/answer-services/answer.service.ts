@@ -1,36 +1,59 @@
-  import { HttpClient, HttpHeaders } from '@angular/common/http';
-  import { Injectable } from '@angular/core';
-  import { StorageService } from '../../../auth-services/storage-service/storage.service';
-  import { Observable } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { StorageService } from "../../../auth-services/storage-service/storage.service";
+import { Observable } from "rxjs";
 
+const BASIC_URL = 'http://localhost:8080/api/';
 
-  const BASIC_URL = 'http://localhost:8080/api/';
+@Injectable({
+  providedIn: 'root'
+})
+export class AnswerService {
 
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class AnswerService {
+  constructor(private http: HttpClient, private storageService: StorageService) { }
 
-
-    constructor(private http: HttpClient) { }
-
-    postAnswer(answerDto: any): Observable<any> {
-      return this.http.post(BASIC_URL + 'answer', answerDto,
-        { headers: this.createAuthorizationHeadere() })
-    }
-    // headersImage = new HttpHeaders({
-    //   'Authorization': 'Bearer ' + StorageService.getToken(),
-    //   'Content-Type': 'multipart/form-data' // Set the correct Content-Type
-    // });
-    postAnswerImage(file: FormData, answerId: number): Observable<any> {
-      return this.http.post<[]>(BASIC_URL + `image/${answerId}`, file,
-        { headers: this.createAuthorizationHeadere() })
-    };
-
-    createAuthorizationHeadere() {
-      let authHeaders = new HttpHeaders();
-      return authHeaders.set(
-        'Authorization', 'Bearer ' + StorageService.getToken()
-      )
-    }
+  postAnswer(answerDto: any): Observable<any> {
+    return this.http.post(BASIC_URL + 'answer', answerDto,
+      { headers: this.createAuthorizationHeader() });
   }
+
+  postAnswerImage(file: FormData, answerId: number): Observable<any> {
+    // Don't set Content-Type header for FormData - browser will set it automatically with boundary
+    return this.http.post<[]>(BASIC_URL + `image/${answerId}`, file,
+      { headers: this.createAuthorizationHeader() });
+  }
+
+  approuveAnswer(answerId: number): Observable<any> {
+    return this.http.get<[]>(BASIC_URL + `answer/${answerId}`,
+      { headers: this.createAuthorizationHeader() });
+  }
+
+  editAnswer(id: number, answerDto: any): Observable<any> {
+    let headers = this.createAuthorizationHeader();
+
+    // If answerDto is FormData, don't set Content-Type
+    if (!(answerDto instanceof FormData)) {
+      headers = headers.set('Content-Type', 'application/json');
+    }
+
+    return this.http.put(BASIC_URL + `answer/${id}`, answerDto, { headers });
+  }
+
+  deleteAnswer(answerId: number): Observable<any> {
+    return this.http.delete(BASIC_URL + `answer/${answerId}`,
+      { headers: this.createAuthorizationHeader() });
+  }
+
+  getAnswerById(answerId: number): Observable<any> {
+    return this.http.get<any>(BASIC_URL + `answer/${answerId}`,
+      { headers: this.createAuthorizationHeader() });
+  }
+
+  private createAuthorizationHeader(): HttpHeaders {
+    const token = this.storageService.getToken();
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    return new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  }
+}

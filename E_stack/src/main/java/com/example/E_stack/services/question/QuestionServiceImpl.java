@@ -1,18 +1,15 @@
 package com.example.E_stack.services.question;
 
-import com.example.E_stack.dtos.AllQuestionResponseDto;
-import com.example.E_stack.dtos.AnswerDto;
-import com.example.E_stack.dtos.QuestionDTO;
-import com.example.E_stack.dtos.SingleQuestionDto;
+import com.example.E_stack.dtos.*;
 import com.example.E_stack.entities.Answer;
+import com.example.E_stack.entities.Apprenant;
 import com.example.E_stack.entities.Question;
 import com.example.E_stack.entities.QuestionVote;
-import com.example.E_stack.entities.User;
 import com.example.E_stack.enums.VoteType;
 import com.example.E_stack.reposeitories.AnswerRepository;
+import com.example.E_stack.reposeitories.ApprenantRepository;
 import com.example.E_stack.reposeitories.ImageRepository;
 import com.example.E_stack.reposeitories.QuestionRepository;
-import com.example.E_stack.reposeitories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,8 +24,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class QuestionServiceImpl implements  QuestionService{
-    //Number of questions per page
+public class QuestionServiceImpl implements QuestionService {
     public static final int SEARCH_RESULT_PER_PAGE = 5;
 
     @Autowired
@@ -38,22 +34,22 @@ public class QuestionServiceImpl implements  QuestionService{
     QuestionRepository questionRepository;
 
     @Autowired
-    UserRepository userRepository;
+    ApprenantRepository apprenantRepository;
 
     @Autowired
     ImageRepository imageRepository;
 
     @Override
     public QuestionDTO addQuestion(QuestionDTO questionDto) {
-        Optional<User> optionalUser = userRepository.findById(questionDto.getUserId());
-        if (optionalUser.isPresent()){
+        Optional<Apprenant> optionalApprenant = apprenantRepository.findById(questionDto.getApprenantId());
+        if (optionalApprenant.isPresent()) {
             Question question = new Question();
             question.setTitle(questionDto.getTitle());
             question.setBody(questionDto.getBody());
             question.setCreatedDate(new Date());
             question.setTags(questionDto.getTags());
-            question.setUser(optionalUser.get());
-            Question createdQuestion =  questionRepository.save(question);
+            question.setApprenant(optionalApprenant.get()); // Set Apprenant instead of User
+            Question createdQuestion = questionRepository.save(question);
 
             QuestionDTO createdQuestionDto = new QuestionDTO();
             createdQuestionDto.setId(createdQuestion.getId());
@@ -65,50 +61,51 @@ public class QuestionServiceImpl implements  QuestionService{
 
     @Override
     public AllQuestionResponseDto getAllQuestions(int pageNumber) {
-// Specify the sorting direction and the field to sort by
         Sort sort = Sort.by(Sort.Order.desc("createdDate"));
-
-// Create a Pageable object with sorting
         Pageable paging = PageRequest.of(pageNumber, SEARCH_RESULT_PER_PAGE, sort);
-        Page<Question> questionsPage =  questionRepository.findAll(paging);
+        Page<Question> questionsPage = questionRepository.findAll(paging);
 
         AllQuestionResponseDto allQuestionResponseDto = new AllQuestionResponseDto();
-
-        allQuestionResponseDto.setQuestionDTOList(questionsPage.getContent().stream().map(Question::getQuestionDto).collect(Collectors.toList()));
+        allQuestionResponseDto.setQuestionDTOList(
+                questionsPage.getContent().stream().map(Question::getQuestionDto).collect(Collectors.toList())
+        );
         allQuestionResponseDto.setPageNumber(questionsPage.getPageable().getPageNumber());
         allQuestionResponseDto.setTotalPages(questionsPage.getTotalPages());
         return allQuestionResponseDto;
     }
 
     @Override
-    public SingleQuestionDto getQuestionById(Long userId, Long questionId) {
+    public SingleQuestionDto getQuestionById(Long apprenantId, Long questionId) {
         Optional<Question> optionalQuestion = questionRepository.findById(questionId);
 
-        if(optionalQuestion.isPresent()){
-            //get the question and set it to singleQuestionDto
+        if (optionalQuestion.isPresent()) {
             SingleQuestionDto singleQuestionDto = new SingleQuestionDto();
 
-            // vote check
+            // Handle vote check
             Question existingQuestion = optionalQuestion.get();
-            Optional<QuestionVote> optionalQuestionVote = existingQuestion.getQuestionVoteList().stream().filter(
-                    vote -> vote.getUser().getId().equals(userId)
-            ).findFirst();
-            QuestionDTO questionDto = optionalQuestion.get().getQuestionDto();
+            Optional<QuestionVote> optionalQuestionVote = existingQuestion.getQuestionVoteList().stream()
+                    .filter(vote -> vote.getApprenant().getId().equals(apprenantId)) // Updated to getApprenant()
+                    .findFirst();
+
+            QuestionDTO questionDto = existingQuestion.getQuestionDto();
             questionDto.setVoted(0);
-            if(optionalQuestionVote.isPresent()){
-                if(optionalQuestionVote.get().getVoteType().equals(VoteType.UPVOTE)){
+            if (optionalQuestionVote.isPresent()) {
+                if (optionalQuestionVote.get().getVoteType().equals(VoteType.UPVOTE)) {
                     questionDto.setVoted(1);
-                }else{
+                } else {
                     questionDto.setVoted(-1);
                 }
             }
 
             singleQuestionDto.setQuestionDTO(questionDto);
 
-            //get the question's answers and set it to singleQuestionDto
+            // Handle answers
             List<AnswerDto> answerDtoList = new ArrayList<>();
             List<Answer> answerList = answerRepository.findAllByQuestionId(questionId);
-            for (Answer answer: answerList) {
+            for (Answer answer : answerList) {
+                if (answer.isAppeouved()) { // Assuming isApproved() checks if the answer is approved
+                    singleQuestionDto.getQuestionDTO().setHasApprovedAnswer(true); // Ensure this method exists
+                }
                 AnswerDto answerDto = answer.getAnswerDto();
                 answerDto.setFile(imageRepository.findByAnswer(answer));
                 answerDtoList.add(answerDto);
@@ -120,21 +117,16 @@ public class QuestionServiceImpl implements  QuestionService{
     }
 
     @Override
-    public AllQuestionResponseDto getAllQuestionsByUserId(Long userId, int pageNumber) {
-        try {
-            Pageable paging = PageRequest.of(pageNumber, SEARCH_RESULT_PER_PAGE);
-            Page<Question> questionsPage =  questionRepository.findAllByUserId(userId, paging);
+    public AllQuestionResponseDto getAllQuestionsByApprenantId(Long apprenantId, int pageNumber) {
+        Pageable paging = PageRequest.of(pageNumber, SEARCH_RESULT_PER_PAGE);
+        Page<Question> questionsPage = questionRepository.findAllByApprenantId(apprenantId, paging); // Changed to match Apprenant
 
-            AllQuestionResponseDto allQuestionResponseDto = new AllQuestionResponseDto();
-
-            allQuestionResponseDto.setQuestionDTOList(questionsPage.getContent().stream().map(Question::getQuestionDto).collect(Collectors.toList()));
-            allQuestionResponseDto.setPageNumber(questionsPage.getPageable().getPageNumber());
-            allQuestionResponseDto.setTotalPages(questionsPage.getTotalPages());
-            return allQuestionResponseDto;
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Log the error or handle it appropriately
-            throw new RuntimeException("Error fetching questions for user: " + e.getMessage(), e);
-        }
+        AllQuestionResponseDto allQuestionResponseDto = new AllQuestionResponseDto();
+        allQuestionResponseDto.setQuestionDTOList(
+                questionsPage.getContent().stream().map(Question::getQuestionDto).collect(Collectors.toList())
+        );
+        allQuestionResponseDto.setPageNumber(questionsPage.getPageable().getPageNumber());
+        allQuestionResponseDto.setTotalPages(questionsPage.getTotalPages());
+        return allQuestionResponseDto;
     }
 }

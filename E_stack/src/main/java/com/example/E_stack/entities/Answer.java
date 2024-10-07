@@ -26,11 +26,13 @@ public class Answer {
 
     private Date createdDate; // Date when the answer was created
 
+    private boolean appeouved = false;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "apprenant_id", nullable = false) // Updated the join column
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private User user; // User who posted the answer
+    private Apprenant apprenant; // Changed from User to Apprenant
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "question_id", nullable = false)
@@ -43,9 +45,10 @@ public class Answer {
         AnswerDto answerDto = new AnswerDto();
         answerDto.setId(id);
         answerDto.setBody(body);
-        answerDto.setUserId(user.getId());
+        answerDto.setApprenantId(apprenant.getId()); // Changed from user to apprenant
+        answerDto.setAppeouved(appeouved);
         answerDto.setQuestionId(question.getId());
-        answerDto.setUsername(user.getName());
+        answerDto.setUsername(apprenant.getNom()); // Changed from user.getName() to apprenant.getNom()
         answerDto.setCreatedDate(createdDate);
         return answerDto;
     }

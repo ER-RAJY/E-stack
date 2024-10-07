@@ -1,30 +1,38 @@
 import { Component, OnInit } from '@angular/core';
 import { QuestionService } from '../../user-service/question-service/question.service';
-import { ActivatedRoute } from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { StorageService } from "../../../auth-services/storage-service/storage.service";
 import {AnswerService} from "../../user-service/answer-services/answer.service";
+import { MatDialog } from '@angular/material/dialog';
+import {EditAnswerComponent} from "../edit-answer/edit-answer.component"; // Import MatDialog
+
 
 @Component({
   selector: 'app-views-question',
   templateUrl: './views-question.component.html',
   styleUrls: ['./views-question.component.scss']
 })
-export class ViewsQuestionComponent implements OnInit {
-  questionId: number = this.activatedRoute.snapshot.params["questionId"];
+export class ViewsQuestionComponent implements OnInit {  questionId: number = this.activatedRoute.snapshot.params["questionId"];
   question: any;
   validateForm!: FormGroup;
   selectedFile!: File | null;
   imagePreview!: string | ArrayBuffer | null;
   formData: FormData = new FormData();
   answers: any[] = [];
+  displayButton: boolean = false;
 
-  constructor(private questionService: QuestionService,
-              private answerService: AnswerService,
-              private activatedRoute: ActivatedRoute,
-              private formBuilder: FormBuilder,
-              private snackBar: MatSnackBar) { }
+  constructor(
+    private questionService: QuestionService,
+    private router: Router,
+    private answerService: AnswerService,
+    private activatedRoute: ActivatedRoute,
+    private formBuilder: FormBuilder,
+    private snackBar: MatSnackBar,
+    private storageService: StorageService, // Injecting StorageService
+    private dialog: MatDialog // Inject MatDialog
+  ) { }
 
   ngOnInit() {
     this.validateForm = this.formBuilder.group({
@@ -42,18 +50,20 @@ export class ViewsQuestionComponent implements OnInit {
           element.convertedImg = "data:image/jpeg;base64," + element.file.data;
         }
         this.answers.push(element);
-      })
-
-    })
+      });
+      if (this.storageService.getUserId() === this.question.userId) { // Use instance method
+        this.displayButton = true;
+      }
+    });
   }
+
+  // ... rest of your component methods remain unchanged
 
   addAnswer() {
     const data = this.validateForm.value;
     data.questionId = this.questionId;
-    data.userId = StorageService.getUserId();
+    data.userId = this.storageService.getUserId(); // Use instance method
     this.formData.append('multipartFile', this.selectedFile!);
-
-    console.log("Sending AnswerDto:", data); // سجل البيانات لي غادي ترسلها
 
     this.answerService.postAnswer(data).subscribe(
       (res: { id: number | null; }) => {
@@ -82,22 +92,20 @@ export class ViewsQuestionComponent implements OnInit {
     this.validateForm.reset();
   }
 
-
   addVote(voteType: string, voted: number) {
-
-    if (voted == 1 || voted == -1) {
-      this.snackBar.open("You already voted to this question", "Close", {
+    if (voted === 1 || voted === -1) {
+      this.snackBar.open("You already voted for this question", "Close", {
         duration: 5000,
         panelClass: ['error-snackbar']
       });
     } else {
       const data = {
-        userId: StorageService.getUserId(),
+        userId: this.storageService.getUserId(), // Use instance method
         questionId: this.questionId,
         voteType: voteType
       }
       this.questionService.addVoteToQuestion(data).subscribe(res => {
-        console.log("********** addVote res : ", res)
+        console.log("********** addVote res : ", res);
         if (res != null) {
           this.snackBar.open("Vote added successfully", "Close", {
             duration: 5000,
@@ -108,13 +116,40 @@ export class ViewsQuestionComponent implements OnInit {
             duration: 5000,
           });
         }
-      })
-
+      });
     }
+  }
+  toEdit(answerId: number) {
+    const dialogRef = this.dialog.open(EditAnswerComponent, {
+      width: '400px',
+      data: { answerId: answerId }
+    });
 
-
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.snackBar.open("Answer updated successfully", "Close", {
+          duration: 5000,
+        });
+        this.getQuestionById(); // Refresh the answers after edit
+      } else {
+        this.snackBar.open("Failed to update answer", "Close", {
+          duration: 5000,
+        });
+      }
+    });
   }
 
+  approuveAnswer(answerId:number){
+    this.answerService.approuveAnswer(answerId).subscribe((res)=> {
+      console.log(res);
+      if (res.id != null){
+        this.snackBar.open("Answer approved successfully", "Close", {duration: 5000});
+    }else {
+        this.snackBar.open("Something went wrong", "Close", { duration: 5000 });
+      }
+    });
+
+  }
   onFileSelectedd(event: any) {
     this.selectedFile = event.target.files[0];
     this.previewImage();
@@ -135,5 +170,19 @@ export class ViewsQuestionComponent implements OnInit {
     };
     reader.readAsDataURL(this.selectedFile!);
   }
+  deleteAnswer(answerId: number): void {
+    this.answerService.deleteAnswer(answerId).subscribe(
+      response => {
+        // Handle successful deletion
+        console.log('Answer deleted:', response);
+        // Optionally refresh the list of answers here
+      },
+      error => {
+        // Handle error case
+        console.error('Error deleting answer:', error);
+      }
+    );
+  }
+
 
 }

@@ -15,7 +15,8 @@ public class AnswerDto {
     private String body; // Content of the answer
     private Date createdDate; // Date when the answer was created
     private Long questionId; // ID of the question
-    private Long userId; // ID of the user
+    private Long apprenantId; // ID of the user
     private String username; // Username of the user
     private Image file; // Optional image file associated with the answer (if applicable)
+    private boolean appeouved = false;
 }

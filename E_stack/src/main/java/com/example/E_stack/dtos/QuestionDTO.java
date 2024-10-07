@@ -11,8 +11,9 @@ public class QuestionDTO {
     private String body;
     private Date createdDate;
     private List<String> tags;
-    private Long userId;
+    private Long apprenantId;
     private String username;
     private Integer voteCount = 0;
     private int voted;
+    private boolean hasApprovedAnswer = false; // Renamed
 }

@@ -4,48 +4,51 @@ import com.example.E_stack.dtos.AllQuestionResponseDto;
 import com.example.E_stack.dtos.QuestionDTO;
 import com.example.E_stack.dtos.SingleQuestionDto;
 import com.example.E_stack.services.question.QuestionService;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor; // Use RequiredArgsConstructor for constructor injection
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 @RestController
 @RequestMapping("/api")
-@AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor // For constructor injection
 public class QuestionController {
-    @Autowired
-    QuestionService questionService;
+    private final QuestionService questionService; // Use final for dependency injection
 
     @PostMapping("/question")
-    public ResponseEntity<?> postQuestion(@RequestBody QuestionDTO questionDto){
+    public ResponseEntity<?> postQuestion(@RequestBody QuestionDTO questionDto) {
         QuestionDTO createdQuestionDto = questionService.addQuestion(questionDto);
-        if (createdQuestionDto == null){
-            return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
+        if (createdQuestionDto == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Failed to create question. Please check your input.");
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(createdQuestionDto);
     }
 
     @GetMapping("/questions/{pageNumber}")
-    public ResponseEntity<AllQuestionResponseDto> getAllQuestions(@PathVariable int pageNumber){
+    public ResponseEntity<AllQuestionResponseDto> getAllQuestions(@PathVariable int pageNumber) {
         AllQuestionResponseDto allQuestionResponseDto = questionService.getAllQuestions(pageNumber);
         return ResponseEntity.ok(allQuestionResponseDto);
     }
 
-    @GetMapping("/question/{userId}/{questionId}")
-    public ResponseEntity<?> getQuestionById(@PathVariable Long userId , @PathVariable Long questionId){
-        SingleQuestionDto singleQuestionDto = questionService.getQuestionById(userId, questionId);
-        if (singleQuestionDto == null){
-            return ResponseEntity.notFound().build();
+    @GetMapping("/question/{apprenantId}/{questionId}") // Changed userId to apprenantId
+    public ResponseEntity<?> getQuestionById(@PathVariable Long apprenantId, @PathVariable Long questionId) {
+        try {
+            SingleQuestionDto singleQuestionDto = questionService.getQuestionById(apprenantId, questionId);
+            if (singleQuestionDto == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Question not found.");
+            }
+            return ResponseEntity.ok(singleQuestionDto);
+        } catch (Exception e) {
+            // Log the error using a logging framework
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while retrieving the question: " + e.getMessage());
         }
-        return ResponseEntity.ok(singleQuestionDto);
     }
 
-    @GetMapping("/questions/{userId}/{pageNumber}")
-    public ResponseEntity<AllQuestionResponseDto> getQuestionsByUserId(@PathVariable Long userId, @PathVariable int pageNumber){
-        AllQuestionResponseDto allQuestionResponseDto = questionService.getAllQuestionsByUserId(userId, pageNumber);
+    @GetMapping("/questions/{apprenantId}/{pageNumber}") // Changed userId to apprenantId
+    public ResponseEntity<AllQuestionResponseDto> getQuestionsByApprenantId(@PathVariable Long apprenantId, @PathVariable int pageNumber) {
+        AllQuestionResponseDto allQuestionResponseDto = questionService.getAllQuestionsByApprenantId(apprenantId, pageNumber);
         return ResponseEntity.ok(allQuestionResponseDto);
     }
-
 }

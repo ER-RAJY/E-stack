@@ -1,15 +1,13 @@
 <!-- Show when user is not logged in -->
 <div *ngIf="!isUserLoggedIn">
   <mat-toolbar color="primary" class="navbar">
-    <span class="navbar-brand"> <img src="assets/img/enaa-favicon.png"> STACK </span>
+    <span class="navbar-brand">
+      <img src="assets/img/enaa-favicon.png"> STACK
+    </span>
     <span class="spacer"></span>
     <button mat-button routerLink="/login" routerLinkActive="active">
       <mat-icon>login</mat-icon>
       <span>Login</span>
-    </button>
-    <button mat-button routerLink="/signup" routerLinkActive="active">
-      <mat-icon>person_add</mat-icon>
-      <span>Signup</span>
     </button>
   </mat-toolbar>
 </div>
@@ -17,23 +15,26 @@
 <!-- Show when user is logged in -->
 <div *ngIf="isUserLoggedIn">
   <mat-toolbar color="primary" class="navbar">
-    <span class="navbar-brand"> <img src="assets/img/enaa-favicon.png"> STACK </span>
+    <span class="navbar-brand">
+      <img src="assets/img/enaa-favicon.png"> STACK
+    </span>
     <span class="spacer"></span>
     <button mat-button routerLink="/user/dashboard" routerLinkActive="active">
       <mat-icon>dashboard</mat-icon>
       <span>Dashboard</span>
     </button>
     <button mat-button routerLink="/user/question" routerLinkActive="active">
-    <!-- <mat-icon>Question</mat-icon>-->
+      <mat-icon>question_answer</mat-icon>
       <span>Question</span>
     </button>
-    <button mat-button routerLink="/user/my_questions" routerLinkActive="active">My questions
+    <button mat-button routerLink="/user/my_questions" routerLinkActive="active">
+      <mat-icon>assignment</mat-icon>
+      <span>My Questions</span>
     </button>
     <button mat-button (click)="logout()" routerLinkActive="active">
       <mat-icon>logout</mat-icon>
       <span>Logout</span>
     </button>
-
   </mat-toolbar>
 </div>
 

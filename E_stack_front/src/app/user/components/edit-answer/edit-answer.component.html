@@ -1,0 +1,23 @@
+<div class="edit-answer-container">
+  <h2>Edit Answer</h2>
+  <form [formGroup]="validateForm" (ngSubmit)="addAnswer()">
+    <div class="form-field">
+      <mat-form-field appearance="fill">
+        <mat-label>Answer Body</mat-label>
+        <textarea matInput rows="4" placeholder="Edit your answer..." formControlName="body"></textarea>
+        <mat-error *ngIf="validateForm.get('body')?.invalid && (validateForm.get('body')?.touched || validateForm.get('body')?.dirty)">
+          Answer body is required.
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-field">
+      <div class="image-preview" *ngIf="imagePreview">
+        <img [src]="imagePreview" height="100" alt="Image Preview">
+      </div>
+      <input id="file" type="file" accept="image/png, image/jpeg" (change)="onFileSelected($event)">
+    </div>
+
+    <button mat-raised-button color="accent" [disabled]="validateForm.invalid">Update Answer</button>
+  </form>
+</div>

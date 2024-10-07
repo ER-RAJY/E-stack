@@ -23,12 +23,12 @@ public class Image {
     private String type;
 
     @Lob
-    @Column(name = "data", length = 10000)
+    @Column(name = "data", length = 10000) // You may adjust the length as necessary
     private byte[] data;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name="answer_id", nullable = false)
+    @JoinColumn(name = "answer_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
+    @JsonIgnore // Prevents circular references in JSON serialization
     private Answer answer;
 }

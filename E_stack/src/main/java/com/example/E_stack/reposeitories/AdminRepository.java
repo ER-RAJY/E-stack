@@ -1,14 +1,13 @@
 package com.example.E_stack.reposeitories;
 
-import com.example.E_stack.entities.User;
+
+import com.example.E_stack.entities.Admin;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long>{
-
-
-    Optional<User> findFirstByEmail(String email);
+public interface AdminRepository extends JpaRepository<Admin,Long> {
+    Optional<Admin> findByEmail(String email);
 }

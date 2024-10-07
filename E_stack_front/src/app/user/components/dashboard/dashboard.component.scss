@@ -38,7 +38,7 @@
 }
 .pagination {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   margin-top: 20px;
   .mat-paginator {
     @media (max-width: 600px) {

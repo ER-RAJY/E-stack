@@ -1,71 +1,55 @@
 package com.example.E_stack.controller;
-import com.example.E_stack.dtos.AuthenticationRequest;
-import com.example.E_stack.entities.User;
-import com.example.E_stack.reposeitories.UserRepository;
-import com.example.E_stack.utils.JwtUtil;
-import jakarta.servlet.http.HttpServletResponse;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import com.example.E_stack.entities.Admin;
+import com.example.E_stack.entities.AuthenticationResponse;
+import com.example.E_stack.entities.Personne;
+import com.example.E_stack.services.auth.AuthenticationService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.util.Optional;
-
 @RestController
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
+@Slf4j
 public class AuthenticationController {
 
-    @Autowired
-    AuthenticationManager authenticationManager;
+    private final AuthenticationService authenticationService;
 
-    @Autowired
-    UserDetailsService userDetailsService;
-
-    @Autowired
-    JwtUtil jwtUtil;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    public static final String TOKEN_PREFIX = "Bearer ";
-    public static final String HEADER_STRING= "Authorization";
-
-    @PostMapping("/authentication")
-    public void createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequestDTO, HttpServletResponse response) throws IOException, JSONException {
-        try{
-            //authenticate a user by verifying the provided email and password against the configured authentication manager.
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequestDTO.getEmail(), authenticationRequestDTO.getPassword()));
-        }catch (BadCredentialsException e){
-            throw new BadCredentialsException("Incorrect Email or password");
-        }catch (DisabledException disabledException){
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "User is not created");
-            return;
+    @PostMapping("/register-admin")
+    public ResponseEntity<AuthenticationResponse> registerAdmin(@RequestBody Admin admin) {
+        log.info("Received admin registration request for email: {}", admin.getEmail());
+        try {
+            AuthenticationResponse response = authenticationService.registerAdmin(admin);
+            if ("Admin already exists".equals(response.getMessage())) {
+                log.warn("Admin registration failed - admin already exists: {}", admin.getEmail());
+                return ResponseEntity.badRequest().body(response);
+            }
+            log.info("Admin registration successful for email: {}", admin.getEmail());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Error during admin registration: {}", e.getMessage(), e);
+            return ResponseEntity.internalServerError()
+                    .body(new AuthenticationResponse(null, "Registration failed: " + e.getMessage(), null, "")); // Provide a role value
         }
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequestDTO.getEmail());
-        //Get user by email
-        Optional<User> optionalUser = userRepository.findFirstByEmail(userDetails.getUsername());
+    }
 
-        //Generate the token for the user
-        final String jwt = jwtUtil.generateToken(userDetails);
-
-        if (optionalUser.isPresent()){
-            //return json object contain the userId
-            response.getWriter().write(new JSONObject().put("userId", optionalUser.get().getId()).toString());
+    @PostMapping("/login")
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody Personne personne) {
+        log.info("Received login request for user: {}", personne.getUsername());
+        try {
+            AuthenticationResponse response = authenticationService.authenticate(personne);
+            log.info("Login successful for user: {}", personne.getUsername());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Login failed for user {}: {}", personne.getUsername(), e.getMessage(), e);
+            return ResponseEntity.badRequest()
+                    .body(new AuthenticationResponse(null, "Login failed: " + e.getMessage(), null, "")); // Provide a role value
         }
-        //Send in the header
-        response.addHeader("Access-Control-Expose-Headers", "Authorization");
-        response.setHeader( "Access-Control-Allow-Headers", "Authorization, X-PINGOTHER, X-Requested-With, Content-Type, Accept, X-Custom-header");
-        // exp Authorization : Bearer JWTkjfhgkfjhgf45h3g
-        response.setHeader(HEADER_STRING,TOKEN_PREFIX + jwt);
     }
 }

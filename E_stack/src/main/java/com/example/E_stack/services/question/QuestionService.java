@@ -1,6 +1,5 @@
 package com.example.E_stack.services.question;
 
-
 import com.example.E_stack.dtos.AllQuestionResponseDto;
 import com.example.E_stack.dtos.QuestionDTO;
 import com.example.E_stack.dtos.SingleQuestionDto;
@@ -10,7 +9,7 @@ public interface QuestionService {
 
     AllQuestionResponseDto getAllQuestions(int pageNumber);
 
-    SingleQuestionDto getQuestionById(Long userId, Long questionId);
+    SingleQuestionDto getQuestionById(Long apprenantId, Long questionId);  // Updated from userId to apprenantId
 
-    AllQuestionResponseDto getAllQuestionsByUserId(Long userId, int pageNumber);
+    AllQuestionResponseDto getAllQuestionsByApprenantId(Long apprenantId, int pageNumber);  // Updated from userId to apprenantId
 }

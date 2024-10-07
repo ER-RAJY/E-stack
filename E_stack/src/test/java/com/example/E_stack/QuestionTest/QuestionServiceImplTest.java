@@ -2,12 +2,11 @@ package com.example.E_stack.QuestionTest;
 
 import com.example.E_stack.dtos.AllQuestionResponseDto;
 import com.example.E_stack.dtos.QuestionDTO;
-import com.example.E_stack.dtos.SingleQuestionDto;
+import com.example.E_stack.entities.Apprenant;
 import com.example.E_stack.entities.Question;
-import com.example.E_stack.entities.User;
 import com.example.E_stack.reposeitories.AnswerRepository;
+import com.example.E_stack.reposeitories.ApprenantRepository;
 import com.example.E_stack.reposeitories.QuestionRepository;
-import com.example.E_stack.reposeitories.UserRepository;
 import com.example.E_stack.services.question.QuestionServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,33 +39,33 @@ public class QuestionServiceImplTest {
     private QuestionRepository questionRepository;
 
     @Mock
-    private UserRepository userRepository;
+    private ApprenantRepository apprenantRepository;
 
     @InjectMocks
     private QuestionServiceImpl questionService;
 
     private Question question1;
     private Question question2;
-    private User user;
+    private Apprenant apprenant;
 
     @BeforeEach
     public void setup() {
-        user = new User();
-        user.setId(1L);
+        apprenant = new Apprenant();
+        apprenant.setId(1L);
 
         question1 = new Question();
         question1.setId(1L);
         question1.setTitle("Question 1");
         question1.setBody("Body 1");
         question1.setCreatedDate(new Date());
-        question1.setUser(user);
+        question1.setApprenant(apprenant);
 
         question2 = new Question();
         question2.setId(2L);
         question2.setTitle("Question 2");
         question2.setBody("Body 2");
         question2.setCreatedDate(new Date());
-        question2.setUser(user);
+        question2.setApprenant(apprenant);
     }
 
 //    @Test
@@ -90,9 +89,9 @@ public class QuestionServiceImplTest {
         QuestionDTO questionDto = new QuestionDTO();
         questionDto.setTitle("New Question");
         questionDto.setBody("New Question Body");
-        questionDto.setUserId(1L);
+        questionDto.setApprenantId(1L);
 
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(apprenantRepository.findById(1L)).thenReturn(Optional.empty());
 
         QuestionDTO createdQuestionDto = questionService.addQuestion(questionDto);
 
@@ -129,9 +128,9 @@ public class QuestionServiceImplTest {
         PageRequest pageRequest = PageRequest.of(0, 5);
         Page<Question> questionPage = new PageImpl<>(questionsList, pageRequest, questionsList.size());
 
-        when(questionRepository.findAllByUserId(1L, pageRequest)).thenReturn(questionPage);
+        when(questionRepository.findAllByApprenantId(1L, pageRequest)).thenReturn(questionPage);
 
-        AllQuestionResponseDto responseDto = questionService.getAllQuestionsByUserId(1L, 0);
+        AllQuestionResponseDto responseDto = questionService.getAllQuestionsByApprenantId(1L, 0);
 
         assertEquals(2, responseDto.getQuestionDTOList().size());
         assertEquals("Question 1", responseDto.getQuestionDTOList().get(0).getTitle());

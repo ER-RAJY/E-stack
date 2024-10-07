@@ -18,25 +18,23 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@AllArgsConstructor
-public class ImageServiceImp implements ImageService{
+public class ImageServiceImp implements ImageService {
 
-    private ImageRepository imageRepository;
-
-    private AnswerRepository answerRepository;
+    private final ImageRepository imageRepository; // Use constructor injection for better practice
+    private final AnswerRepository answerRepository;
 
     @Override
     public void storeFile(MultipartFile multipartFile, Long answerId) throws IOException {
         Optional<Answer> optionalAnswer = answerRepository.findById(answerId);
-        if (optionalAnswer.isPresent()){
-            String fileName= StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
+        if (optionalAnswer.isPresent()) {
+            String fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
             Image image = new Image();
             image.setName(fileName);
             image.setAnswer(optionalAnswer.get());
             image.setType(multipartFile.getContentType());
             image.setData(multipartFile.getBytes());
             imageRepository.save(image);
-        }else{
+        } else {
             throw new IOException("Answer not found");
         }
     }

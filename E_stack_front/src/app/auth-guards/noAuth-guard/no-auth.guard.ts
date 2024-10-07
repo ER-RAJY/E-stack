@@ -5,16 +5,16 @@ import { StorageService } from '../../auth-services/storage-service/storage.serv
 @Injectable({
   providedIn: 'root'
 })
-
 export class NoAuthGuard implements CanActivate {
-  constructor(private router: Router) { }
+
+  constructor(private router: Router,
+              private storageService: StorageService) { } // Inject StorageService
+
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    if (StorageService.hasToken()) {
+    if (this.storageService.hasToken()) { // Use instance method
       this.router.navigateByUrl("/user/dashboard");
       return false;
     }
     return true;
   }
-
-
 }

@@ -1,63 +1,66 @@
-<!-- //////////////////////////// View question html /////////////////////////////// -->
-
-
+<!-- Question Card -->
 <div class="question-card" style="margin-top: 30px;" *ngIf="question">
-  <h2 class="question-title">
-    {{question.title}}
-  </h2>
+  <h2 class="question-title">{{ question.title }}</h2>
   <p>
-    Asked On: <b>{{question.createdDate | date: ' dd , MM , YYYY '}}</b>
-    By: <b>{{question.username}}</b>
-    Viewed: <b>{{question.views}}</b> times
+    Asked On: <b>{{ question.createdDate | date: 'dd, MM, YYYY' }}</b>
+    By: <b>{{ question.username }}</b>
+    Viewed: <b>{{ question.views }}</b> times
   </p>
   <div class="vote-section">
     <div class="arrow-icon" (click)="addVote('UPVOTE', question.voted)"
          [ngStyle]="{'color' : question.voted == '1'? 'rgb(11,211,81)' : 'default'}">
       <i class="material-icons">keyboard_arrow_up</i>
     </div>
-    <div class="vote-count">{{question.voteCount}}</div>
-    <div class="arrow-icon" (click)="addVote ('DOWNVOTE', question.voted)"
+    <div class="vote-count">{{ question.voteCount }}</div>
+    <div class="arrow-icon" (click)="addVote('DOWNVOTE', question.voted)"
          [ngStyle]="{'color' : question.voted == '-1'? 'rgb(11,211,81)' : 'default'}">
       <i class="material-icons">keyboard_arrow_down</i>
     </div>
   </div>
   <div class="question-body">
-    <p>Body: {{question.body}}</p>
+    <p>Body: {{ question.body }}</p>
     <div class="tags-list">
       <mat-chip-listbox>
-        <mat-chip color="primary" *ngFor="let tag of question.tags">{{tag}} </mat-chip>
+        <mat-chip color="primary" *ngFor="let tag of question.tags">{{ tag }}</mat-chip>
       </mat-chip-listbox>
     </div>
     <hr>
-
   </div>
-</div>
-
-<!-- //////////////////////////// View Answer html /////////////////////////////// -->
-
-<div *ngFor="let answer of answers; let i = index;" class="answer-card" style="margin-top: 30px;">
-  <h2>Answer</h2>
-  <div>
+  <!-- Answer Section -->
+  <div *ngFor="let answer of answers; let i = index;" class="answer-card" style="margin-top: 30px;">
+    <h2>Answer</h2>
     <div>
-      <h5 class="answred">
-        Answerd by: <b>{{ answer.username }}</b> {{" - "}}
-        Answered on: <b>{{ answer.createdDate | date: 'MMM d, y, h:mm a'}}</b>
-      </h5>
-      <p>{{ answer.body }}</p>
-      <div *ngIf="answer.convertedImg">
-        <img [src]="answer.convertedImg" />
+      <div>
+        <h5 class="answred">
+          Answered by: <b>{{ answer.username }}</b> {{" - "}}
+          Answered on: <b>{{ answer.createdDate | date: 'MMM d, y, h:mm a'}}</b>
+        </h5>
+        <p>{{ answer.body }}</p>
+        <div *ngIf="answer.convertedImg">
+          <img [src]="answer.convertedImg" />
+        </div>
+        <span>
+          <hr>
+            <div>
+                 <button mat-raised-button (click)="approuveAnswer(answer.id)" *ngIf="displayButton" color="primary">Approve Answer</button>
+            </div>
+        </span>
+
+        <!-- Edit and Delete Buttons for Answer -->
+        <div class="button-section">
+          <div class="button-section">
+            <button mat-button color="primary" (click)="toEdit(answer.id)">Edit</button>
+            <button mat-button color="warn" (click)="deleteAnswer(answer.id)">Delete</button>
+          </div>
+
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- //////////////////////////// Post Answer html /////////////////////////////// -->
-
-<div class="answer-section" style="margin-top: 30px; margin-bottom: 30px;">
-  <div>
-    <div>
-      <h2>Post Answer</h2>
-    </div>
+  <!-- Post Answer Section -->
+  <div class="answer-section" style="margin-top: 30px; margin-bottom: 30px;">
+    <h2>Post Answer</h2>
     <form [formGroup]="validateForm" (ngSubmit)="addAnswer()">
       <div class="form-field">
         <mat-form-field appearance="fill">
@@ -75,4 +78,3 @@
     </form>
   </div>
 </div>
-<div style="margin-top: 30px; margin-bottom: 30px;">.</div>

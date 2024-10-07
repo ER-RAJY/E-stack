@@ -1,36 +1,33 @@
-import { Component } from '@angular/core';
-import { StorageService } from "./auth-services/storage-service/storage.service";
-import {NavigationEnd, Router} from "@angular/router";
-
+import { Component, OnInit } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'] // Fix for styleUrls
 })
-export class AppComponent {
-  title = 'E_stack_front';
-  isUserLoggedIn: boolean = false; // Declare as boolean with an initial value
+export class AppComponent implements OnInit {
+  title = 'frontend-angular';
+  isUserLoggedIn: boolean = false;
 
-  constructor(private router:Router) { } // Inject StorageService
+  constructor(private router: Router) {}
 
   ngOnInit() {
-    this.updateUserLoggedInStatus(); // Call the function on init
-    this.router.events.subscribe(event=>{
-      if(event instanceof  NavigationEnd){
+    this.updateUserLoggedInStatus();
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
         this.updateUserLoggedInStatus();
       }
-    })
+    });
   }
 
-  private updateUserLoggedInStatus(): void { // Fix the method signature
-    // this.isUserLoggedIn = this.storageService.isUserLoggedIn();
-    this.isUserLoggedIn = StorageService.isUserLoggedIn(); // Access static method from the class
-
+  private updateUserLoggedInStatus(): void {
+    this.isUserLoggedIn = !!localStorage.getItem('access_token');
   }
 
-  logout(){
-    StorageService.logout();
-    this.router.navigateByUrl("/login")
+  logout(): void {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('character_id');
+    this.router.navigate(['/login']);
   }
 }

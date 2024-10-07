@@ -4,7 +4,7 @@
   margin-bottom: 20px;
   display: flex;
   flex-direction: column;
-  width: 60%;
+  width: 80%;
   margin: 0 auto;
 }
 h2 {
@@ -56,7 +56,7 @@ h2 {
   border: 1px solid #ccc;
   padding: 20px;
   margin-bottom: 20px;
-  width: 60%;
+  width: 80%;
   margin: 0 auto;
 }
 h2 {
@@ -92,7 +92,7 @@ img {
   padding: 20px;
   margin-top: 20px;
   margin-bottom: 20px;
-  width: 60%;
+  width: 80%;
   margin: 0 auto;
 }
 @media screen and (max-width: 600px) {
@@ -115,4 +115,24 @@ img {
   cursor: pointer;
   margin-right: 10px;
   font-size: 24px;
+}
+.approved-badge {
+  display: flex;
+  align-items: center;
+  color: #4CAF50;
+  margin-top: 8px;
+
+  mat-icon {
+    margin-right: 8px;
+  }
+}
+
+.success-snackbar {
+  background: #4CAF50;
+  color: white;
+}
+
+.error-snackbar {
+  background: #F44336;
+  color: white;
 }

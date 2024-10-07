@@ -1,34 +1,41 @@
 <div class="login-container">
   <div class="login-card">
     <div class="login-form">
-      <img src="assets/img/logo.png" />
+      <img src="assets/img/logo.png" alt="Logo" class="login-logo"/>
       <h2>Log in</h2>
       <p>Enter your account details</p>
 
-      <form [formGroup]="loginForm" (ngSubmit)="login()">
+      <form [formGroup]="loginForm" (ngSubmit)="submitForm()"> <!-- Submit method fixed -->
+        <!-- Email Input -->
         <mat-form-field class="form-input" appearance="outline">
           <mat-label>Email</mat-label>
           <input matInput placeholder="Email" formControlName="email" type="email" required />
+          <mat-error *ngIf="loginForm.controls['email'].hasError('required')">Email is required</mat-error>
+          <mat-error *ngIf="loginForm.controls['email'].hasError('email')">Enter a valid email</mat-error>
         </mat-form-field>
 
+        <!-- Password Input -->
         <mat-form-field class="form-input" appearance="outline">
           <mat-label>Password</mat-label>
-          <input matInput
-                 [type]="hidePassword ? 'password' : 'text'"
-                 formControlName="password"
-                 required />
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" required />
           <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" type="button">
             <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
+          <mat-error *ngIf="loginForm.controls['password'].hasError('required')">Password is required</mat-error>
         </mat-form-field>
 
+        <!-- Forgot Password Link -->
         <a href="#" class="forgot-password">Forgot Password?</a>
+
+        <!-- Login Button -->
         <button mat-flat-button color="primary" class="login-button" type="submit">Log in</button>
       </form>
 
-      <p class="signup-link">Don't have an account? <a href="#">Sign up</a></p>
+      <!-- Signup Link -->
+<!--      //<p class="signup-link">Don't have an account? <a href="#">Sign up</a></p>-->
     </div>
 
+    <!-- Right Side Image -->
     <div class="login-image">
       <h2>Welcome to the apprentant portal</h2>
       <p>Log in to access your account</p>

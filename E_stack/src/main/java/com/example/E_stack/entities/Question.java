@@ -1,7 +1,6 @@
 package com.example.E_stack.entities;
 
 import com.example.E_stack.dtos.QuestionDTO;
-import com.example.E_stack.entities.QuestionVote;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -31,10 +30,10 @@ public class Question {
     private Integer voteCount = 0;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name="user_id", nullable = false)
+    @JoinColumn(name="apprenant_id", nullable = false)  // Updated the join column
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private User user;
+    private Apprenant apprenant;  // Changed from User to Apprenant
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     @JsonIgnore
@@ -46,11 +45,10 @@ public class Question {
         questionDTO.setTitle(title);
         questionDTO.setBody(body);
         questionDTO.setCreatedDate(createdDate);
-        questionDTO.setUserId(user.getId());
+        questionDTO.setApprenantId(apprenant.getId());  // Changed from user to apprenant
         questionDTO.setTags(tags);
         questionDTO.setVoteCount(voteCount);
-        questionDTO.setUsername(user.getName());
+        questionDTO.setUsername(apprenant.getNom());  // Changed from user.getName() to apprenant.getNom()
         return questionDTO;
     }
-
 }

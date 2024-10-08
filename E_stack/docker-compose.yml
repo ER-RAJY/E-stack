@@ -1,0 +1,28 @@
+version: "3.9"  # Updated version
+
+services:
+  stackdb:
+    image: postgres
+    container_name: stackdb
+    restart: always
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=estack
+    ports:
+      - '5432:5432'
+
+  stack:
+    container_name: stack  # Use a different name for the application container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8080:8080'
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stackdb:5432/estack  # Updated to use stackdb
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      - stackdb

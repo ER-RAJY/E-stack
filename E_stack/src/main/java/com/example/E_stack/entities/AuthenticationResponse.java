@@ -16,6 +16,6 @@ public class AuthenticationResponse {
     @JsonProperty("character_id")
     private Long characterId;
 
-    @JsonProperty("role")    // New role field
+    @JsonProperty("role")
     private String role;
 }

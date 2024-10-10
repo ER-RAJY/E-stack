@@ -136,3 +136,13 @@ img {
   background: #F44336;
   color: white;
 }
+.approved-icon {
+
+  color: green; // Set the color for the approved icon
+  font-size: 24px; // Adjust the size of the icon if necessary
+
+  mat-icon {
+    vertical-align: middle;
+    font-size: inherit; // Ensure the icon takes the font size from the parent
+  }
+}

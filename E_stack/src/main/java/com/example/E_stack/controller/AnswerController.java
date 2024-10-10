@@ -55,12 +55,13 @@ public class AnswerController {
 
     // Delete an answer by ID
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteAnswer(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteAnswer(@PathVariable Long id) {
         try {
             answerService.deleteAnswer(id);
-            return ResponseEntity.ok("Answer deleted successfully"); // 200 OK
+            return ResponseEntity.ok().build(); // Return 200 OK without a body
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage()); // Respond with error message
+            return ResponseEntity.badRequest().build(); // Handle errors appropriately
         }
     }
+
 }

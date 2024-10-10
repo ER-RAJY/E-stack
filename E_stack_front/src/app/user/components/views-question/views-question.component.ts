@@ -1,20 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { QuestionService } from '../../user-service/question-service/question.service';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { StorageService } from "../../../auth-services/storage-service/storage.service";
-import {AnswerService} from "../../user-service/answer-services/answer.service";
+import { AnswerService } from "../../user-service/answer-services/answer.service";
 import { MatDialog } from '@angular/material/dialog';
-import {EditAnswerComponent} from "../edit-answer/edit-answer.component"; // Import MatDialog
-
+import { EditAnswerComponent } from "../edit-answer/edit-answer.component";
+import Swal from "sweetalert2"; // Import MatDialog
 
 @Component({
   selector: 'app-views-question',
   templateUrl: './views-question.component.html',
   styleUrls: ['./views-question.component.scss']
 })
-export class ViewsQuestionComponent implements OnInit {  questionId: number = this.activatedRoute.snapshot.params["questionId"];
+export class ViewsQuestionComponent implements OnInit {
+  questionId: number = this.activatedRoute.snapshot.params["questionId"];
   question: any;
   validateForm!: FormGroup;
   selectedFile!: File | null;
@@ -30,8 +31,8 @@ export class ViewsQuestionComponent implements OnInit {  questionId: number = th
     private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
-    private storageService: StorageService, // Injecting StorageService
-    private dialog: MatDialog // Inject MatDialog
+    private storageService: StorageService,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit() {
@@ -43,30 +44,35 @@ export class ViewsQuestionComponent implements OnInit {  questionId: number = th
 
   getQuestionById() {
     this.questionService.getQuestionById(this.questionId).subscribe(data => {
-      console.log("Get Question By Id questionService", data)
+      console.log("Get Question By Id questionService", data);
       this.question = data.questionDTO;
+      this.answers = []; // Clear the answers array before repopulating
+
+      // Iterate over the answer list and ensure approved is correctly mapped
       data.answerDtoList.forEach((element: any) => {
         if (element.file != null) {
           element.convertedImg = "data:image/jpeg;base64," + element.file.data;
         }
+        element.approved = element.approved || false; // Default to false if not present
         this.answers.push(element);
       });
-      if (this.storageService.getUserId() === this.question.userId) { // Use instance method
+
+      // Update displayButton logic if the user is the owner of the question
+      if (this.storageService.getapprenantId() === this.question.apprenantId) {
         this.displayButton = true;
       }
     });
   }
 
-  // ... rest of your component methods remain unchanged
-
   addAnswer() {
     const data = this.validateForm.value;
     data.questionId = this.questionId;
-    data.userId = this.storageService.getUserId(); // Use instance method
+    data.apprenantId = this.storageService.getapprenantId();
     this.formData.append('multipartFile', this.selectedFile!);
-
+    console.log("idQuestion===", data.questionId, "UserId===", data.apprenantId);
     this.answerService.postAnswer(data).subscribe(
       (res: { id: number | null; }) => {
+        this.validateForm.reset();
         if (res.id != null) {
           this.answerService.postAnswerImage(this.formData, res.id).subscribe(
             (response: any) => {
@@ -76,6 +82,7 @@ export class ViewsQuestionComponent implements OnInit {  questionId: number = th
           this.snackBar.open("Answer added successfully", "Close", {
             duration: 5000,
           });
+          this.getQuestionById(); // Refresh the question and answers list
         } else {
           this.snackBar.open("Failed to add answer", "Close", {
             duration: 5000,
@@ -89,7 +96,6 @@ export class ViewsQuestionComponent implements OnInit {  questionId: number = th
         console.error(error);
       }
     );
-    this.validateForm.reset();
   }
 
   addVote(voteType: string, voted: number) {
@@ -100,7 +106,7 @@ export class ViewsQuestionComponent implements OnInit {  questionId: number = th
       });
     } else {
       const data = {
-        userId: this.storageService.getUserId(), // Use instance method
+        apprenantId: this.storageService.getapprenantId(),
         questionId: this.questionId,
         voteType: voteType
       }
@@ -119,6 +125,7 @@ export class ViewsQuestionComponent implements OnInit {  questionId: number = th
       });
     }
   }
+
   toEdit(answerId: number) {
     const dialogRef = this.dialog.open(EditAnswerComponent, {
       width: '400px',
@@ -139,23 +146,28 @@ export class ViewsQuestionComponent implements OnInit {  questionId: number = th
     });
   }
 
-  approuveAnswer(answerId:number){
-    this.answerService.approuveAnswer(answerId).subscribe((res)=> {
+  approuveAnswer(answerId: number) {
+    this.answerService.approuveAnswer(answerId).subscribe((res) => {
       console.log(res);
-      if (res.id != null){
-        this.snackBar.open("Answer approved successfully", "Close", {duration: 5000});
-    }else {
+      if (res.id != null) {
+        const hasApprovedAnswer = this.answers.find(answer => answer.id === answerId);
+        if (hasApprovedAnswer) {
+          hasApprovedAnswer.approved = true; // Update the approved status
+        }
+
+        this.snackBar.open("Answer approved successfully", "Close", { duration: 5000 });
+      } else {
         this.snackBar.open("Something went wrong", "Close", { duration: 5000 });
       }
     });
-
   }
+
   onFileSelectedd(event: any) {
     this.selectedFile = event.target.files[0];
     this.previewImage();
-    console.log("********** selected file", this.selectedFile)
-
+    console.log("********** selected file", this.selectedFile);
   }
+
   onFileSelected(event: any) {
     const file: File = event.target.files[0];
     if (file) {
@@ -163,6 +175,7 @@ export class ViewsQuestionComponent implements OnInit {  questionId: number = th
     }
     this.previewImage();
   }
+
   previewImage() {
     const reader = new FileReader();
     reader.onload = () => {
@@ -170,19 +183,36 @@ export class ViewsQuestionComponent implements OnInit {  questionId: number = th
     };
     reader.readAsDataURL(this.selectedFile!);
   }
-  deleteAnswer(answerId: number): void {
-    this.answerService.deleteAnswer(answerId).subscribe(
-      response => {
-        // Handle successful deletion
-        console.log('Answer deleted:', response);
-        // Optionally refresh the list of answers here
-      },
-      error => {
-        // Handle error case
-        console.error('Error deleting answer:', error);
-      }
-    );
-  }
 
+  deleteAnswer(answerId: number): void {
+    // Use SweetAlert2 for confirmation
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You won’t be able to revert this!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#747474',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Proceed with deletion if confirmed
+        this.answerService.deleteAnswer(answerId).subscribe(
+          response => {
+            console.log('Answer deleted:', response);
+            this.snackBar.open("Answer deleted successfully", "Close", {
+              duration: 5000,
+            });
+            this.getQuestionById(); // Refresh the question and answers list
+          },
+          error => {
+            console.error('Error deleting answer:', error);
+            this.snackBar.open("Failed to delete answer", "Close", {
+              duration: 5000,
+            });
+          }
+        );
+      }
+    });
+  }
 
 }

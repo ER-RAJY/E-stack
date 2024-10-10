@@ -30,7 +30,7 @@ export class StorageService {
   }
 
   // Retrieve the user ID
-  getUserId(): number | null {
+  getapprenantId(): number | null {
     const apprenantId = localStorage.getItem("character_id");
     return apprenantId ? Number(apprenantId) : null;
   }
@@ -45,4 +45,15 @@ export class StorageService {
     localStorage.removeItem(StorageService.ACCESS_TOKEN_KEY);
     localStorage.removeItem(StorageService.USER_ID_KEY);
   }
+  // In StorageService
+  private static readonly ROLE_KEY = 'user_role'; // Add this line for role key
+
+  setUserRole(role: string): void {
+    localStorage.setItem(StorageService.ROLE_KEY, role);
+  }
+
+  getUserRole(): string | null {
+    return localStorage.getItem(StorageService.ROLE_KEY);
+  }
+
 }

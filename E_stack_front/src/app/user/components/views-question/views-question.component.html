@@ -6,17 +6,19 @@
     By: <b>{{ question.username }}</b>
     Viewed: <b>{{ question.views }}</b> times
   </p>
+
   <div class="vote-section">
     <div class="arrow-icon" (click)="addVote('UPVOTE', question.voted)"
-         [ngStyle]="{'color' : question.voted == '1'? 'rgb(11,211,81)' : 'default'}">
+         [ngStyle]="{'color' : question.voted == '1' ? 'rgb(11,211,81)' : 'default'}">
       <i class="material-icons">keyboard_arrow_up</i>
     </div>
     <div class="vote-count">{{ question.voteCount }}</div>
     <div class="arrow-icon" (click)="addVote('DOWNVOTE', question.voted)"
-         [ngStyle]="{'color' : question.voted == '-1'? 'rgb(11,211,81)' : 'default'}">
+         [ngStyle]="{'color' : question.voted == '-1' ? 'rgb(11,211,81)' : 'default'}">
       <i class="material-icons">keyboard_arrow_down</i>
     </div>
   </div>
+
   <div class="question-body">
     <p>Body: {{ question.body }}</p>
     <div class="tags-list">
@@ -26,35 +28,42 @@
     </div>
     <hr>
   </div>
+
   <!-- Answer Section -->
   <div *ngFor="let answer of answers; let i = index;" class="answer-card" style="margin-top: 30px;">
     <h2>Answer</h2>
+
+    <!-- Approved Answer Check -->
+    <div class="approved-icon" *ngIf="answer.approved">
+      <mat-icon>check_circle</mat-icon> <!-- Check icon when approved -->
+    </div>
+
     <div>
-      <div>
-        <h5 class="answred">
-          Answered by: <b>{{ answer.username }}</b> {{" - "}}
-          Answered on: <b>{{ answer.createdDate | date: 'MMM d, y, h:mm a'}}</b>
-        </h5>
-        <p>{{ answer.body }}</p>
-        <div *ngIf="answer.convertedImg">
-          <img [src]="answer.convertedImg" />
-        </div>
-        <span>
-          <hr>
-            <div>
-                 <button mat-raised-button (click)="approuveAnswer(answer.id)" *ngIf="displayButton" color="primary">Approve Answer</button>
-            </div>
-        </span>
+      <h5 class="answered">
+        Answered by: <b>{{ answer.username }}</b> {{" - "}}
+        Answered on: <b>{{ answer.createdDate | date: 'MMM d, y, h:mm a'}}</b>
+      </h5>
 
-        <!-- Edit and Delete Buttons for Answer -->
-        <div class="button-section">
-          <div class="button-section">
-            <button mat-button color="primary" (click)="toEdit(answer.id)">Edit</button>
-            <button mat-button color="warn" (click)="deleteAnswer(answer.id)">Delete</button>
-          </div>
+      <p>{{ answer.body }}</p>
 
-        </div>
+      <!-- Image Display -->
+      <div *ngIf="answer.convertedImg">
+        <img [src]="answer.convertedImg" height="200" alt="Answer Image"/>
       </div>
+
+      <hr>
+
+      <!-- Approve Button -->
+      <div *ngIf="!answer.isApproved && displayButton">
+        <button mat-raised-button (click)="approuveAnswer(answer.id)" color="primary">Approve Answer</button>
+      </div>
+
+      <!-- Edit and Delete Buttons for Answer -->
+      <div class="button-section" *ngIf="displayButton">
+        <button mat-button color="primary" (click)="toEdit(answer.id)">Edit</button>
+        <button mat-button color="warn" (click)="deleteAnswer(answer.id)">Delete</button>
+      </div>
+
     </div>
   </div>
 

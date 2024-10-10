@@ -11,8 +11,11 @@ const BASIC_URL = 'http://localhost:8080/api/';
 export class AnswerService {
 
   constructor(private http: HttpClient, private storageService: StorageService) { }
-
+  private getapprenantId(): number | null {
+    return this.storageService.getapprenantId(); // Use instance method
+  }
   postAnswer(answerDto: any): Observable<any> {
+    answerDto.apprenantId = this.getapprenantId();
     return this.http.post(BASIC_URL + 'answer', answerDto,
       { headers: this.createAuthorizationHeader() });
   }
@@ -41,12 +44,12 @@ export class AnswerService {
 
   deleteAnswer(answerId: number): Observable<any> {
     return this.http.delete(BASIC_URL + `answer/${answerId}`,
-      { headers: this.createAuthorizationHeader() });
+      { headers: this.createAuthorizationHeader(), responseType: 'text' }); // Specify 'text' response type to handle the string
   }
 
+
   getAnswerById(answerId: number): Observable<any> {
-    return this.http.get<any>(BASIC_URL + `answer/${answerId}`,
-      { headers: this.createAuthorizationHeader() });
+    return this.http.get<any>(BASIC_URL + `answer/${answerId}`);
   }
 
   private createAuthorizationHeader(): HttpHeaders {

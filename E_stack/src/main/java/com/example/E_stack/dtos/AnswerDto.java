@@ -18,5 +18,5 @@ public class AnswerDto {
     private Long apprenantId; // ID of the user
     private String username; // Username of the user
     private Image file; // Optional image file associated with the answer (if applicable)
-    private boolean appeouved = false;
+    private boolean approved = false;
 }

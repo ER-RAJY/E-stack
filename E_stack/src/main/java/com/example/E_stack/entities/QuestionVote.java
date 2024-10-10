@@ -7,25 +7,26 @@ import lombok.Data;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-@Entity
 @Data
+@Entity
 public class QuestionVote {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // ID for the vote
+    private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private VoteType voteType; // Enum representing the vote type (UPVOTE/DOWNVOTE)
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "apprenant_id", nullable = false) // Associated Apprenant who voted
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
-    private Apprenant apprenant; // Reference to Apprenant (instead of User)
+    private VoteType voteType;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "question_id", nullable = false) // Associated Question for the vote
+    @JoinColumn(name = "apprenant_id", nullable = false)  // Changed to 'apprenant_id'
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private Question question; // Reference to the Question entity
+    private Apprenant apprenant;  // Changed from 'personne' to 'apprenant'
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "question_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    private Question question;
 }
+

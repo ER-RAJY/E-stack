@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {QuestionService} from "../../user-service/question-service/question.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {MatChipEditedEvent, MatChipInputEvent} from "@angular/material/chips";
@@ -11,11 +11,12 @@ import {COMMA, ENTER} from "@angular/cdk/keycodes";
   templateUrl: './post-question.component.html',
   styleUrls: ['./post-question.component.scss']
 })
-export class PostQuestionComponent {
+export class PostQuestionComponent implements OnInit{
   tags: any[] = [];
   isSubmitting!: boolean;
   addOnBlur: boolean = true;
   validateForm!: FormGroup;
+
 
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
   announcer = inject(LiveAnnouncer);

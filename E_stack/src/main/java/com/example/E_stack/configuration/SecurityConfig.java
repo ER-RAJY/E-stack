@@ -39,8 +39,6 @@ public class SecurityConfig {
                                 "/api/auth/login",
                                 "/api/auth/**"
                         ).permitAll()
-                        //.requestMatchers("/api/question").hasAuthority("ADMIN")
-                        .requestMatchers("/api/question").hasAuthority("APPRENANT")
                         .anyRequest().authenticated()
                 )
                 .userDetailsService(personService)

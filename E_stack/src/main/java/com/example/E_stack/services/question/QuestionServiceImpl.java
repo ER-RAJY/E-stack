@@ -6,6 +6,8 @@ import com.example.E_stack.entities.Apprenant;
 import com.example.E_stack.entities.Question;
 import com.example.E_stack.entities.QuestionVote;
 import com.example.E_stack.enums.VoteType;
+import com.example.E_stack.exeption.ApprenantNotFoundException;
+import com.example.E_stack.exeption.QuestionNotFoundException;
 import com.example.E_stack.reposeitories.AnswerRepository;
 import com.example.E_stack.reposeitories.ApprenantRepository;
 import com.example.E_stack.reposeitories.ImageRepository;
@@ -28,35 +30,33 @@ public class QuestionServiceImpl implements QuestionService {
     public static final int SEARCH_RESULT_PER_PAGE = 5;
 
     @Autowired
-    AnswerRepository answerRepository;
+    private AnswerRepository answerRepository;
 
     @Autowired
-    QuestionRepository questionRepository;
+    private QuestionRepository questionRepository;
 
     @Autowired
-    ApprenantRepository apprenantRepository;
+    private ApprenantRepository apprenantRepository;
 
     @Autowired
-    ImageRepository imageRepository;
+    private ImageRepository imageRepository;
 
     @Override
     public QuestionDTO addQuestion(QuestionDTO questionDto) {
-        Optional<Apprenant> optionalApprenant = apprenantRepository.findById(questionDto.getApprenantId());
-        if (optionalApprenant.isPresent()) {
-            Question question = new Question();
-            question.setTitle(questionDto.getTitle());
-            question.setBody(questionDto.getBody());
-            question.setCreatedDate(new Date());
-            question.setTags(questionDto.getTags());
-            question.setApprenant(optionalApprenant.get()); // Set Apprenant instead of User
-            Question createdQuestion = questionRepository.save(question);
+        validateQuestionDto(questionDto);
+        Apprenant apprenant = apprenantRepository.findById(questionDto.getApprenantId())
+                .orElseThrow(() -> new ApprenantNotFoundException("Apprenant not found with ID: " + questionDto.getApprenantId()));
 
-            QuestionDTO createdQuestionDto = new QuestionDTO();
-            createdQuestionDto.setId(createdQuestion.getId());
-            createdQuestionDto.setTitle(createdQuestion.getTitle());
-            return createdQuestionDto;
-        }
-        return null;
+        Question question = new Question();
+        question.setTitle(questionDto.getTitle());
+        question.setBody(questionDto.getBody());
+        question.setCreatedDate(new Date());
+        question.setTags(questionDto.getTags());
+        question.setApprenant(apprenant);
+
+        Question createdQuestion = questionRepository.save(question);
+
+        return convertToDto(createdQuestion);
     }
 
     @Override
@@ -65,68 +65,79 @@ public class QuestionServiceImpl implements QuestionService {
         Pageable paging = PageRequest.of(pageNumber, SEARCH_RESULT_PER_PAGE, sort);
         Page<Question> questionsPage = questionRepository.findAll(paging);
 
-        AllQuestionResponseDto allQuestionResponseDto = new AllQuestionResponseDto();
-        allQuestionResponseDto.setQuestionDTOList(
-                questionsPage.getContent().stream().map(Question::getQuestionDto).collect(Collectors.toList())
+        return new AllQuestionResponseDto(
+                questionsPage.getContent().stream().map(Question::getQuestionDto).collect(Collectors.toList()),
+                questionsPage.getPageable().getPageNumber(),
+                questionsPage.getTotalPages()
         );
-        allQuestionResponseDto.setPageNumber(questionsPage.getPageable().getPageNumber());
-        allQuestionResponseDto.setTotalPages(questionsPage.getTotalPages());
-        return allQuestionResponseDto;
     }
 
     @Override
     public SingleQuestionDto getQuestionById(Long apprenantId, Long questionId) {
-        Optional<Question> optionalQuestion = questionRepository.findById(questionId);
+        Question existingQuestion = questionRepository.findById(questionId)
+                .orElseThrow(() -> new QuestionNotFoundException("Question not found with ID: " + questionId));
 
-        if (optionalQuestion.isPresent()) {
-            SingleQuestionDto singleQuestionDto = new SingleQuestionDto();
-
-            // Handle vote check
-            Question existingQuestion = optionalQuestion.get();
-            Optional<QuestionVote> optionalQuestionVote = existingQuestion.getQuestionVoteList().stream()
-                    .filter(vote -> vote.getApprenant().getId().equals(apprenantId)) // Updated to getApprenant()
-                    .findFirst();
-
-            QuestionDTO questionDto = existingQuestion.getQuestionDto();
-            questionDto.setVoted(0);
-            if (optionalQuestionVote.isPresent()) {
-                if (optionalQuestionVote.get().getVoteType().equals(VoteType.UPVOTE)) {
-                    questionDto.setVoted(1);
-                } else {
-                    questionDto.setVoted(-1);
-                }
-            }
-
-            singleQuestionDto.setQuestionDTO(questionDto);
-
-            // Handle answers
-            List<AnswerDto> answerDtoList = new ArrayList<>();
-            List<Answer> answerList = answerRepository.findAllByQuestionId(questionId);
-            for (Answer answer : answerList) {
-                if (answer.isAppeouved()) { // Assuming isApproved() checks if the answer is approved
-                    singleQuestionDto.getQuestionDTO().setHasApprovedAnswer(true); // Ensure this method exists
-                }
-                AnswerDto answerDto = answer.getAnswerDto();
-                answerDto.setFile(imageRepository.findByAnswer(answer));
-                answerDtoList.add(answerDto);
-            }
-            singleQuestionDto.setAnswerDtoList(answerDtoList);
-            return singleQuestionDto;
-        }
-        return null;
+        SingleQuestionDto singleQuestionDto = new SingleQuestionDto();
+        singleQuestionDto.setQuestionDTO(handleVoteCheck(existingQuestion, apprenantId));
+        singleQuestionDto.setAnswerDtoList(getApprovedAnswersForQuestion(questionId));
+        return singleQuestionDto;
     }
 
     @Override
     public AllQuestionResponseDto getAllQuestionsByApprenantId(Long apprenantId, int pageNumber) {
         Pageable paging = PageRequest.of(pageNumber, SEARCH_RESULT_PER_PAGE);
-        Page<Question> questionsPage = questionRepository.findAllByApprenantId(apprenantId, paging); // Changed to match Apprenant
+        Page<Question> questionsPage = questionRepository.findAllByApprenantId(apprenantId, paging);
 
-        AllQuestionResponseDto allQuestionResponseDto = new AllQuestionResponseDto();
-        allQuestionResponseDto.setQuestionDTOList(
-                questionsPage.getContent().stream().map(Question::getQuestionDto).collect(Collectors.toList())
+        return new AllQuestionResponseDto(
+                questionsPage.getContent().stream().map(Question::getQuestionDto).collect(Collectors.toList()),
+                questionsPage.getPageable().getPageNumber(),
+                questionsPage.getTotalPages()
         );
-        allQuestionResponseDto.setPageNumber(questionsPage.getPageable().getPageNumber());
-        allQuestionResponseDto.setTotalPages(questionsPage.getTotalPages());
-        return allQuestionResponseDto;
+    }
+
+    @Override
+    public void deleteQuestionById(Long questionId) {
+        if (!questionRepository.existsById(questionId)) {
+            throw new QuestionNotFoundException("Question not found with ID: " + questionId);
+        }
+        questionRepository.deleteById(questionId);
+    }
+
+    // Private helper methods
+    private void validateQuestionDto(QuestionDTO questionDto) {
+        if (questionDto == null || questionDto.getTitle() == null || questionDto.getBody() == null || questionDto.getApprenantId() == null) {
+            throw new IllegalArgumentException("Question details are incomplete. Title, body, and Apprenant ID are required.");
+        }
+    }
+
+    private QuestionDTO convertToDto(Question question) {
+        QuestionDTO questionDto = new QuestionDTO();
+        questionDto.setId(question.getId());
+        questionDto.setTitle(question.getTitle());
+        questionDto.setBody(question.getBody());
+        questionDto.setCreatedDate(question.getCreatedDate());
+        questionDto.setTags(question.getTags());
+        return questionDto;
+    }
+
+    private QuestionDTO handleVoteCheck(Question question, Long apprenantId) {
+        QuestionDTO questionDto = question.getQuestionDto();
+        questionDto.setVoted(0);
+        question.getQuestionVoteList().stream()
+                .filter(vote -> vote.getApprenant().getId().equals(apprenantId))
+                .findFirst()
+                .ifPresent(vote -> questionDto.setVoted(vote.getVoteType() == VoteType.UPVOTE ? 1 : -1));
+        return questionDto;
+    }
+
+    private List<AnswerDto> getApprovedAnswersForQuestion(Long questionId) {
+        List<AnswerDto> answerDtoList = new ArrayList<>();
+        List<Answer> answerList = answerRepository.findAllByQuestionId(questionId);
+        for (Answer answer : answerList) {
+            if (answer.isApproved()) {
+                answerDtoList.add(answer.getAnswerDto());
+            }
+        }
+        return answerDtoList;
     }
 }

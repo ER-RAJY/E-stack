@@ -3,108 +3,150 @@ package com.example.E_stack.services.answer;
 import com.example.E_stack.dtos.AnswerDto;
 import com.example.E_stack.entities.Answer;
 import com.example.E_stack.entities.Question;
-import com.example.E_stack.entities.Apprenant; // Import the Apprenant entity
+import com.example.E_stack.entities.Apprenant;
+
 import com.example.E_stack.reposeitories.AnswerRepository;
 import com.example.E_stack.reposeitories.ApprenantRepository;
 import com.example.E_stack.reposeitories.QuestionRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Optional;
 
+/**
+ * Implementation of the AnswerService interface.
+ * Provides services for handling operations related to answers such as posting, editing, deleting, and approving answers.
+ */
 @Service
-@AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class AnswerServiceImpl implements AnswerService {
 
-    @Autowired
-    private AnswerRepository answerRepository;
+    // Repositories for interacting with database entities
+    private final AnswerRepository answerRepository;
+    private final QuestionRepository questionRepository;
+    private final ApprenantRepository apprenantRepository;
 
-    @Autowired
-    private QuestionRepository questionRepository;
-
-    @Autowired
-    private ApprenantRepository apprenantRepository; // Change from UserRepository to ApprenantRepository
-
+    /**
+     * Posts an answer to a question.
+     *
+     * @param answerDto The data transfer object containing the answer details.
+     * @return AnswerDto representing the created answer.
+     * @throws IllegalArgumentException if the required fields are missing.
+     * @throws RuntimeException if the apprenant or question is not found.
+     */
     @Override
     public AnswerDto postAnswer(AnswerDto answerDto) {
-        Optional<Apprenant> optionalApprenant = apprenantRepository.findById(answerDto.getApprenantId()); // Update to Apprenant
+        // Validate the input
+        if (answerDto == null || answerDto.getBody() == null || answerDto.getApprenantId() == null || answerDto.getQuestionId() == null) {
+            throw new IllegalArgumentException("Answer details are incomplete. Body, Apprenant ID, and Question ID are required.");
+        }
+
+        // Fetch the apprenant and question
+        Optional<Apprenant> optionalApprenant = apprenantRepository.findById(answerDto.getApprenantId());
         Optional<Question> optionalQuestion = questionRepository.findById(answerDto.getQuestionId());
 
         if (optionalApprenant.isPresent() && optionalQuestion.isPresent()) {
-            // Convert DTO to Entity
+            // Map DTO to Entity
             Answer answer = new Answer();
             answer.setBody(answerDto.getBody());
             answer.setCreatedDate(new Date());
             answer.setQuestion(optionalQuestion.get());
-            answer.setApprenant(optionalApprenant.get()); // Update to Apprenant
+            answer.setApprenant(optionalApprenant.get());
 
-            // Save entity
+            // Save the answer
             Answer createdAnswer = answerRepository.save(answer);
 
-            // Convert saved entity to DTO
-            AnswerDto createdAnswerDto = mapToDto(createdAnswer);
+            // Handle automatic approval logic (if needed)
+            if (createdAnswer.isApproved()) {
+                optionalApprenant.get().submitAnswer(createdAnswer);
+            }
 
-            return createdAnswerDto;
+            // Return the created answer as a DTO
+            return mapToDto(createdAnswer);
         }
-        return null;
+
+        throw new RuntimeException("Apprenant or Question not found with the provided IDs.");
     }
 
+    /**
+     * Edits an existing answer.
+     *
+     * @param answerId  The ID of the answer to be edited.
+     * @param answerDto The updated answer details.
+     * @return AnswerDto representing the updated answer.
+     */
     @Override
     public AnswerDto editAnswer(Long answerId, AnswerDto answerDto) {
         Optional<Answer> optionalAnswer = answerRepository.findById(answerId);
         if (optionalAnswer.isPresent()) {
+            // Update the answer entity with the new details
             Answer existingAnswer = optionalAnswer.get();
-            existingAnswer.setBody(answerDto.getBody()); // Update the answer body
-            existingAnswer.setCreatedDate(new Date()); // Update createdDate or keep it unchanged if desired
+            existingAnswer.setBody(answerDto.getBody());
+            existingAnswer.setCreatedDate(new Date()); // Update timestamp
 
+            // Save the updated answer
             Answer updatedAnswer = answerRepository.save(existingAnswer);
 
-            // Convert the updated entity back to DTO
-            AnswerDto updatedAnswerDto = mapToDto(updatedAnswer);
-
-            return updatedAnswerDto;
+            // Return the updated answer as a DTO
+            return mapToDto(updatedAnswer);
         }
         return null;
     }
 
+    /**
+     * Deletes an existing answer by its ID.
+     *
+     * @param answerId The ID of the answer to be deleted.
+     * @throws RuntimeException if the answer is not found.
+     */
     @Override
     public void deleteAnswer(Long answerId) {
         Optional<Answer> optionalAnswer = answerRepository.findById(answerId);
         if (optionalAnswer.isPresent()) {
-            System.out.println("Deleting Answer: " + optionalAnswer.get()); // Print answer being deleted
-            answerRepository.deleteById(answerId);
+            answerRepository.deleteById(answerId); // Delete the answer
         } else {
-            throw new RuntimeException("Answer not found"); // Optional: Handle not found
+            throw new RuntimeException("Answer not found");
         }
     }
 
-    // Utility method for mapping entity to DTO
+    /**
+     * Approves an existing answer.
+     *
+     * @param answerId The ID of the answer to be approved.
+     * @return AnswerDto representing the approved answer.
+     */
+    @Override
+    public AnswerDto aprouveAnswer(Long answerId) {
+        Optional<Answer> optionalAnswer = answerRepository.findById(answerId);
+        if (optionalAnswer.isPresent()) {
+            // Mark the answer as approved
+            Answer answer = optionalAnswer.get();
+            answer.setApproved(true);
+
+            // Save the updated answer
+            Answer updatedAnswer = answerRepository.save(answer);
+
+            // Return the approved answer as a DTO
+            return mapToDto(updatedAnswer);
+        }
+        return null;
+    }
+
+    /**
+     * Utility method to map an Answer entity to an AnswerDto.
+     *
+     * @param answer The Answer entity to be mapped.
+     * @return AnswerDto containing the answer details.
+     */
     private AnswerDto mapToDto(Answer answer) {
         AnswerDto dto = new AnswerDto();
         dto.setId(answer.getId());
         dto.setBody(answer.getBody());
         dto.setCreatedDate(answer.getCreatedDate());
         dto.setQuestionId(answer.getQuestion().getId());
-        dto.setApprenantId(answer.getApprenant().getId()); // Update to Apprenant
-        dto.setUsername(answer.getApprenant().getNom()); // Update to Apprenant
+        dto.setApprenantId(answer.getApprenant().getId());
+        dto.setUsername(answer.getApprenant().getNom());
         return dto;
-    }
-
-    @Override
-    public AnswerDto aprouveAnswer(Long answerId) {
-        Optional<Answer> optionalAnswer = answerRepository.findById(answerId);
-        if (optionalAnswer.isPresent()) {
-            Answer answer = optionalAnswer.get();
-            answer.setAppeouved(true); // Approve the answer
-            Answer updatedAnswer = answerRepository.save(answer); // Save the updated entity
-
-            // Use the mapToDto method to convert the updated entity to a DTO
-            return mapToDto(updatedAnswer);
-        }
-        return null;
     }
 }

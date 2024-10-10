@@ -50,7 +50,9 @@ public class AuthenticationService {
             String jwt = jwtService.generateToken(person);
             log.info("Authentication successful for user: {}", request.getEmail());
 
-            return new AuthenticationResponse(jwt, "Login successful", person.getId(), person.getRole().name()); // Assuming you have a method to get the role name
+            // Store the role in the response and set it in the StorageService
+            String role = person.getRole().name();
+            return new AuthenticationResponse(jwt, "Login successful", person.getId(), role);
 
         } catch (PersonNotFoundException e) {
             log.warn("Authentication failed - user not found: {}", request.getEmail());
@@ -63,6 +65,7 @@ public class AuthenticationService {
             return new AuthenticationResponse(null, "Authentication failed", null, ""); // Provide a role value
         }
     }
+
 
     public AuthenticationResponse registerAdmin(Admin admin) {
         try {

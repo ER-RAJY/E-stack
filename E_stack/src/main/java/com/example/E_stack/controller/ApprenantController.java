@@ -1,7 +1,7 @@
 package com.example.E_stack.controller;
 
-
 import com.example.E_stack.dtos.ApprenantDTO;
+import com.example.E_stack.dtos.ScoreDto;
 import com.example.E_stack.entities.Apprenant;
 import com.example.E_stack.entities.AuthenticationResponse;
 import com.example.E_stack.services.apprenant.ApprenantsService;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -75,5 +74,10 @@ public class ApprenantController {
         Optional<ApprenantDTO> apprenantDTO = apprenantsService.findById(id);
         return apprenantDTO.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+    @GetMapping("/{id}/score")
+    public ResponseEntity<ScoreDto> getScore(@PathVariable Long id) {
+        ScoreDto score = apprenantsService.getScoreForApprenant(id);
+        return ResponseEntity.ok(score);
     }
 }

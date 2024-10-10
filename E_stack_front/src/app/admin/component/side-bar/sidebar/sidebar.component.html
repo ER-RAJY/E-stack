@@ -1,0 +1,46 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #drawer class="sidenav" fixedInViewport [mode]="'side'" [opened]="true">
+    <mat-toolbar class="toolbar">
+      <span>Admin Panel</span>
+    </mat-toolbar>
+
+    <mat-nav-list>
+      <a mat-list-item routerLink="/admin/dashboard" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>dashboard</mat-icon>
+        <span matListItemTitle>Dashboard</span>
+      </a>
+
+      <a mat-list-item routerLink="/admin/edit-users" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>people</mat-icon>
+        <span matListItemTitle>Users</span>
+      </a>
+
+      <a mat-list-item routerLink="/admin/list-users" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>school</mat-icon>
+        <span matListItemTitle>Manage Apprenants</span>
+      </a>
+
+      <a mat-list-item routerLink="/admin/settings" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>settings</mat-icon>
+        <span matListItemTitle>Settings</span>
+      </a>
+
+      <a mat-list-item (click)="logout()" class="logout-item">
+        <mat-icon matListItemIcon>logout</mat-icon>
+        <span matListItemTitle>Logout</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar>
+      <button mat-icon-button (click)="toggleDrawer()"> <!-- Calls toggleDrawer method -->
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span class="toolbar-spacer"></span>
+    </mat-toolbar>
+
+    <!-- Main content rendered here -->
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

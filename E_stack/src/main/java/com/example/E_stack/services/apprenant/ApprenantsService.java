@@ -2,6 +2,7 @@ package com.example.E_stack.services.apprenant;
 
 
 import com.example.E_stack.dtos.ApprenantDTO;
+import com.example.E_stack.dtos.ScoreDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,8 +21,5 @@ public interface ApprenantsService {
     void deleteApprenant(Long id);
 
     Optional<ApprenantDTO> findById(Long id);
-//
-//    List<ApprenantDTO> findAllByClasseId(Long classId);
-//
-//    Optional<ApprenantDTO> findById(Long id);
+    ScoreDto getScoreForApprenant(Long  apprenantId);
 }

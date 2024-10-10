@@ -12,4 +12,6 @@ public interface QuestionService {
     SingleQuestionDto getQuestionById(Long apprenantId, Long questionId);  // Updated from userId to apprenantId
 
     AllQuestionResponseDto getAllQuestionsByApprenantId(Long apprenantId, int pageNumber);  // Updated from userId to apprenantId
+    void deleteQuestionById(Long questionId);
+
 }

@@ -1,5 +1,5 @@
-<!-- Show when user is not logged in -->
-<div *ngIf="!isUserLoggedIn">
+<!-- Navbar for non-logged-in users -->
+<div *ngIf="!isUserLoggedIn && showNavbar">
   <mat-toolbar color="primary" class="navbar">
     <span class="navbar-brand">
       <img src="assets/img/enaa-favicon.png"> STACK
@@ -12,8 +12,8 @@
   </mat-toolbar>
 </div>
 
-<!-- Show when user is logged in -->
-<div *ngIf="isUserLoggedIn">
+<!-- Navbar for logged-in non-admin users -->
+<div *ngIf="isUserLoggedIn && showNavbar && userRole !== 'ADMIN'">
   <mat-toolbar color="primary" class="navbar">
     <span class="navbar-brand">
       <img src="assets/img/enaa-favicon.png"> STACK
@@ -31,11 +31,17 @@
       <mat-icon>assignment</mat-icon>
       <span>My Questions</span>
     </button>
-    <button mat-button (click)="logout()" routerLinkActive="active">
+    <button mat-button (click)="logout()">
       <mat-icon>logout</mat-icon>
       <span>Logout</span>
     </button>
   </mat-toolbar>
 </div>
 
+<!-- Sidebar for logged-in admin users -->
+<div *ngIf="isUserLoggedIn && showNavbar && userRole === 'ADMIN'">
+  <app-sidebar></app-sidebar>
+</div>
+
+<!-- Main content area -->
 <router-outlet></router-outlet>

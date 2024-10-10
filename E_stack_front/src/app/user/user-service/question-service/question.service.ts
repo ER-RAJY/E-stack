@@ -9,10 +9,10 @@ const BASIC_URL = "http://localhost:8080/api/";
   providedIn: 'root'
 })
 export class QuestionService {
-  constructor(private http: HttpClient, private storageService: StorageService) {} // Inject StorageService
+  constructor(private http: HttpClient, private storageService: StorageService) {}
 
   postQuestion(questionDto: any): Observable<any> {
-    questionDto.apprenantId = this.getUserId(); // Use instance method
+    questionDto.apprenantId = this.getapprenantId(); // Use instance method
     console.log("questionDto", questionDto);
     return this.http.post(`${BASIC_URL}question`, questionDto, {
       headers: this.createAuthorizationHeader()
@@ -26,13 +26,13 @@ export class QuestionService {
   }
 
   getQuestionById(questionId: number): Observable<any> {
-    return this.http.get<any>(`${BASIC_URL}question/${this.getUserId()}/${questionId}`, {
+    return this.http.get<any>(`${BASIC_URL}question/${this.getapprenantId()}/${questionId}`, {
       headers: this.createAuthorizationHeader()
     });
   }
 
   getQuestionsByUserId(pageNumber: number): Observable<any> {
-    return this.http.get<any[]>(`${BASIC_URL}questions/${this.getUserId()}/${pageNumber}`, {
+    return this.http.get<any[]>(`${BASIC_URL}questions/${this.getapprenantId()}/${pageNumber}`, {
       headers: this.createAuthorizationHeader()
     });
   }
@@ -43,14 +43,15 @@ export class QuestionService {
     });
   }
 
-  editQuestion(questionId: number, questionDto: any): Observable<any> {
-    return this.http.put(`${BASIC_URL}question/${questionId}`, questionDto, {
-      headers: this.createAuthorizationHeader()
+  deleteQuestion(questionId: number): Observable<any> {
+    return this.http.delete(`${BASIC_URL}question/${questionId}`, {
+      headers: this.createAuthorizationHeader(),
+      responseType: 'text' // Specify 'text' response type to handle the string
     });
   }
 
-  deleteQuestion(questionId: number): Observable<any> {
-    return this.http.delete(`${BASIC_URL}question/${questionId}`, {
+  editQuestion(questionId: number, questionDto: any): Observable<any> {
+    return this.http.put(`${BASIC_URL}question/${questionId}`, questionDto, {
       headers: this.createAuthorizationHeader()
     });
   }
@@ -62,7 +63,7 @@ export class QuestionService {
     });
   }
 
-  private getUserId(): number | null {
-    return this.storageService.getUserId(); // Use instance method
+  private getapprenantId(): number | null {
+    return this.storageService.getapprenantId(); // Use instance method
   }
 }

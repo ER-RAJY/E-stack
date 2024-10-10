@@ -1,0 +1,29 @@
+<div class="container">
+  <h2>Apprenant List</h2>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let apprenant of apprenants">
+      <td>{{ apprenant.id }}</td>
+      <td>{{ apprenant.name }}</td>
+      <td>{{ apprenant.email }}</td>
+      <td>
+        <button class="btn btn-primary" [routerLink]="['/apprenant', apprenant.id]">View</button>
+
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

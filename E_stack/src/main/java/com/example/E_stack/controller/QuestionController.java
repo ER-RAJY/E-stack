@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor; // Use RequiredArgsConstructor for constr
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor // For constructor injection
@@ -50,5 +49,17 @@ public class QuestionController {
     public ResponseEntity<AllQuestionResponseDto> getQuestionsByApprenantId(@PathVariable Long apprenantId, @PathVariable int pageNumber) {
         AllQuestionResponseDto allQuestionResponseDto = questionService.getAllQuestionsByApprenantId(apprenantId, pageNumber);
         return ResponseEntity.ok(allQuestionResponseDto);
+    }
+
+    // Add DELETE mapping for deleting a question by its ID
+    @DeleteMapping("/question/{questionId}")
+    public ResponseEntity<?> deleteQuestion(@PathVariable Long questionId) {
+        try {
+            questionService.deleteQuestionById(questionId); // Call service to delete question
+            return ResponseEntity.noContent().build(); // HTTP 204 No Content on successful delete
+        } catch (RuntimeException e) {
+            // Handle case where question does not exist
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }

@@ -11,7 +11,7 @@ import { JWT } from '../../model/JWT';
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
-  hidePassword = true;  // Password visibility toggle
+  hidePassword = true; // Password visibility toggle
 
   constructor(
     private service: AuthService,
@@ -42,26 +42,39 @@ export class LoginComponent implements OnInit {
       next: (response: JWT) => {
         console.log('Login successful:', response);
         const jwtToken = response.access_token;
+        const role = response.role; // This will be 'ADMIN'
 
         if (jwtToken) {
           localStorage.setItem('access_token', jwtToken);
-
-          // Save other user details, such as apprenantId or characterId
           const apprenantId = response.character_id;
           if (apprenantId) {
             localStorage.setItem('character_id', apprenantId.toString());
           }
 
-          // Navigate to home after successful login
-          this.router.navigate(['/user/dashboard']);
+          // Normalize role to lowercase for comparison
+          const normalizedRole = role.toLowerCase();
+
+          // Debugging output to verify role
+          console.log('Normalized Role:', normalizedRole);
+
+          // Redirect based on normalized role
+          if (normalizedRole === 'admin') {
+            this.router.navigate(['/admin/dashboard']);
+            console.log('Navigating to admin dashboard');
+          } else if (normalizedRole === 'apprenant') {
+            this.router.navigate(['/user/dashboard']);
+            console.log('Navigating to user dashboard');
+          } else {
+            console.error('Unknown role:', role);
+          }
         } else {
           console.error('Login failed: Invalid token');
         }
       },
       error: (error) => {
         console.error('Login error:', error);
-        // Optionally, show a notification or an error message
       }
     });
   }
+
 }

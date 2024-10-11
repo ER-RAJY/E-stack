@@ -1,7 +1,7 @@
 pipeline {
     agent any
     tools {
-        maven 'mvn'
+        maven 'maven_3_6_3'
     }
     environment {
         SONAR_TOKEN = 'squ_4db7f7b3ba1539d7d68a826d68ba8b4d2d4ce3ef'
@@ -16,7 +16,7 @@ pipeline {
         stage('Build & Test filRouge') {
             steps {
                 dir('E_stack') {
-                    withMaven(maven: 'mvn') {
+                    withMaven(maven: 'maven_3_6_3') {
                         bat 'mvn clean install'
                     }
                 }

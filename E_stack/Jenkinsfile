@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+    tools {
+        maven 'mvn'
+    }
+    environment {
+        SONAR_TOKEN = 'squ_4db7f7b3ba1539d7d68a826d68ba8b4d2d4ce3ef'
+        SONARQUBE_SERVER = 'http://localhost:9000/'
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/ER-RAJY/E-stack.git'
+            }
+        }
+        stage('Build & Test filRouge') {
+            steps {
+                dir('E_stack') {
+                    withMaven(maven: 'mvn') {
+                        bat 'mvn clean install'
+                    }
+                }
+            }
+        }
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    def scannerHome = tool 'SonarQube'
+                    dir('E_stack') {
+                        bat "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=E_stack -Dsonar.sources=. -Dsonar.host.url=${SONARQUBE_SERVER} -Dsonar.login=${SONAR_TOKEN} -Dsonar.java.binaries=target/classes"
+                    }
+                }
+            }
+        }
+
+
+    }
+}

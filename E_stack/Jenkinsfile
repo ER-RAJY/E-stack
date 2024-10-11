@@ -23,7 +23,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    def scannerHome = tool 'SonarQube'
+                    def scannerHome = tool 'sonar'
                     dir('E_stack') {
                         bat "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=E_stack -Dsonar.sources=. -Dsonar.host.url=${SONARQUBE_SERVER} -Dsonar.login=${SONAR_TOKEN} -Dsonar.java.binaries=target/classes"
                     }

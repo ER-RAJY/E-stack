@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        SONAR_TOKEN = credentials('squ_95f618ffc27f62fe15d35259636ef342323a8d16') // Better to use Jenkins credentials
+        SONAR_TOKEN = credentials('E-stack') // Better to use Jenkins credentials
         SONARQUBE_SERVER = 'http://localhost:9000/'
     }
 

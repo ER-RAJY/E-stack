@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/ER-RAJY/E-stack.git'
+                git branch: 'main', url: 'https://github.com/manbarmohamed/Fill-Rouge.git'
             }
         }
         stage('Build & Test filRouge') {

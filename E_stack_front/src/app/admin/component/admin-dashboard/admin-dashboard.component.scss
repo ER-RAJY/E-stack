@@ -1,0 +1,85 @@
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #f5f5f5; // Light background for the dashboard
+
+  h1 {
+    margin-bottom: 20px;
+    color: #333; // Darker color for the heading
+  }
+
+  .analytics-card {
+    width: 300px; // Set a fixed width for the card
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); // Subtle shadow for the card
+    border-radius: 8px; // Rounded corners
+    background-color: #ffffff; // White background for the card
+
+    mat-card-header {
+      background-color: #3f51b5; // Primary color for header
+      color: white; // White text in header
+      border-top-left-radius: 8px; // Rounded corners
+      border-top-right-radius: 8px; // Rounded corners
+    }
+
+    mat-card-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+
+      .count {
+        font-size: 36px; // Large font size for the count
+        font-weight: bold; // Bold text
+        color: #3f51b5; // Primary color for the count
+        margin: 10px 0; // Margin around the count
+      }
+    }
+
+    mat-card-footer {
+      text-align: center;
+      font-size: 14px; // Smaller font size for footer
+      color: #777; // Gray color for footer text
+      padding: 10px; // Padding around the footer
+    }
+  }
+}
+.dashboard-container {
+  padding: 20px;
+  text-align: center;
+}
+
+.analytics-grid {
+  display: flex;
+  justify-content: space-around; // Distributes the cards evenly
+  flex-wrap: wrap; // Allows wrapping to the next line on smaller screens
+  gap: 20px; // Space between cards
+}
+
+.analytics-card {
+  width: 300px; // Set a fixed width for each card
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px; // Rounded corners
+  transition: transform 0.3s; // Smooth transition for hover effect
+
+  &:hover {
+    transform: translateY(-5px); // Lift effect on hover
+  }
+
+  .mat-card-header {
+    background-color: #3f51b5; // Material Design Primary color
+    color: white;
+  }
+
+  .count {
+    font-size: 2.5em; // Larger font size for count display
+    margin: 0; // Remove default margin
+    color: #3f51b5; // Match color with header
+  }
+
+  mat-card-footer {
+    font-size: 0.9em; // Smaller footer text
+    color: #777; // Lighter color for footer text
+  }
+}

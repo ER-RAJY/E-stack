@@ -1,1 +1,32 @@
-<p>manage-users works!</p>
+<div class="container">
+  <h2>Apprenant List</h2>
+
+  <div *ngIf="loading" class="alert alert-info">Loading apprenants...</div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <table class="table table-striped" *ngIf="!loading && !errorMessage">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nom</th>
+      <th>Email</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let apprenant of apprenants">
+      <td>{{ apprenant.id }}</td>
+      <td>{{ apprenant.nom }}</td>
+      <td>{{ apprenant.email }}</td>
+      <td>
+        <button class="btn btn-warning" (click)="editApprenant(apprenant)">Edit</button>
+        <button class="btn btn-danger" (click)="deleteApprenant(apprenant.id)">Delete</button>
+      </td>
+
+    </tr>
+    </tbody>
+  </table>
+</div>

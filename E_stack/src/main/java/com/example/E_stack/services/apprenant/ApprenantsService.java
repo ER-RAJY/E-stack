@@ -22,4 +22,5 @@ public interface ApprenantsService {
 
     Optional<ApprenantDTO> findById(Long id);
     ScoreDto getScoreForApprenant(Long  apprenantId);
+    long countApprenants();
 }

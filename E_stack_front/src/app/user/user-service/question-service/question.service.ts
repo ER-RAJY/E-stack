@@ -62,7 +62,11 @@ export class QuestionService {
       'Authorization': `Bearer ${token}`
     });
   }
-
+  countQuestions(): Observable<number> {
+    return this.http.get<number>(`${BASIC_URL}questions/count`, {
+      headers: this.createAuthorizationHeader()
+    });
+  }
   private getapprenantId(): number | null {
     return this.storageService.getapprenantId(); // Use instance method
   }

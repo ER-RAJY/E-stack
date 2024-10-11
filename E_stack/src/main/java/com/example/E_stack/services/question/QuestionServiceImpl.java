@@ -103,6 +103,11 @@ public class QuestionServiceImpl implements QuestionService {
         questionRepository.deleteById(questionId);
     }
 
+    @Override
+    public long countQuestions() {
+        return questionRepository.count();
+    }
+
     // Private helper methods
     private void validateQuestionDto(QuestionDTO questionDto) {
         if (questionDto == null || questionDto.getTitle() == null || questionDto.getBody() == null || questionDto.getApprenantId() == null) {

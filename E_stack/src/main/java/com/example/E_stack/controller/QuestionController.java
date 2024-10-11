@@ -24,6 +24,12 @@ public class QuestionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdQuestionDto);
     }
 
+    @GetMapping("/questions/count")
+    public ResponseEntity<Long> countQuestions(){
+        Long cout = questionService.countQuestions();
+        return ResponseEntity.ok(cout);
+    }
+
     @GetMapping("/questions/{pageNumber}")
     public ResponseEntity<AllQuestionResponseDto> getAllQuestions(@PathVariable int pageNumber) {
         AllQuestionResponseDto allQuestionResponseDto = questionService.getAllQuestions(pageNumber);

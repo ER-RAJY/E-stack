@@ -1,0 +1,31 @@
+<h2 mat-dialog-title>{{ apprenant.id ? 'Edit Apprenant' : 'Add New Apprenant' }}</h2>
+<mat-dialog-content>
+  <mat-form-field appearance="fill">
+    <mat-label>Nom</mat-label>
+    <input matInput [(ngModel)]="apprenant.nom" required>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Email</mat-label>
+    <input matInput [(ngModel)]="apprenant.email" type="email" required>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Password</mat-label>
+    <input matInput [(ngModel)]="apprenant.password" type="password" required>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Role</mat-label>
+    <mat-select [(ngModel)]="apprenant.role" required>
+      <mat-option value="APPRENANT">APPRENANT</mat-option>
+      <mat-option value="OTHER_ROLE">ADMIN</mat-option> <!-- Add other roles as needed -->
+    </mat-select>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button color="primary" (click)="onSave()" [disabled]="isLoading">
+    {{ isLoading ? 'Saving...' : 'Save' }}
+  </button>
+</mat-dialog-actions>

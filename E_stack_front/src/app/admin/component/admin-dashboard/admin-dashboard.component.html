@@ -1,1 +1,29 @@
-<p>admin-dashboard works!</p>
+<div class="dashboard-container">
+  <h1>Admin Dashboard</h1>
+
+  <div class="analytics-grid">
+    <mat-card class="analytics-card">
+      <mat-card-header>
+        <mat-card-title>Total Apprenants</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <h2 class="count">{{ apprenantCount }}</h2>
+      </mat-card-content>
+      <mat-card-footer>
+        <p>Keep track of the total number of apprenants in the system.</p>
+      </mat-card-footer>
+    </mat-card>
+
+    <mat-card class="analytics-card">
+      <mat-card-header>
+        <mat-card-title>Total Questions</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <h2 class="count">{{ questionCount }}</h2>
+      </mat-card-content>
+      <mat-card-footer>
+        <p>Keep track of the total number of questions asked.</p>
+      </mat-card-footer>
+    </mat-card>
+  </div>
+</div>

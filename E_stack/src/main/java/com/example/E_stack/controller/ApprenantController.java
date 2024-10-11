@@ -38,6 +38,12 @@ public class ApprenantController {
         }
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> countApprenants() {
+        long count = apprenantsService.countApprenants();
+        return ResponseEntity.ok(count);
+    }
     // Get an Apprenant by ID
     @GetMapping("/getApprenants/{id}")
     public ResponseEntity<ApprenantDTO> getApprenantById(@PathVariable Long id) {

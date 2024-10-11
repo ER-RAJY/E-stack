@@ -1,8 +1,8 @@
-// src/app/models/apprenant.model.ts
-
+// src/model/Apprenant.ts
 export interface Apprenant {
   id: number;
-  name: string;
+  nom: string;
   email: string;
-  score?: number;
+  password?: string; // Consider excluding this if not needed on the frontend
+  role: string;
 }

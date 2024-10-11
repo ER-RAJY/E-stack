@@ -1,40 +1,64 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {Observable, of, tap} from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { Apprenant } from '../../model/Apprenant'; // Create this interface in your models folder
+import { StorageService } from '../../auth-services/storage-service/storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApprenantService {
+  private readonly baseUrl = 'http://localhost:8080/api/apprenants'; // Ensure the correct path
 
-  // Define baseUrl as a class property
-  private readonly baseUrl = 'http://localhost:8080/api';
+  constructor(private http: HttpClient, private storageService: StorageService) {}
 
-  constructor(private http: HttpClient) {}
+  private createAuthorizationHeader(): HttpHeaders {
+    const token = this.storageService.getToken();
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+  }
 
-  // Method to get all apprenants
   getApprenants(): Observable<Apprenant[]> {
-    return this.http.get<Apprenant[]>(`${this.baseUrl}/all`);
+    return this.http.get<Apprenant[]>(`${this.baseUrl}/all`, { headers: this.createAuthorizationHeader() }).pipe(
+      tap(data => console.log('Fetched Apprenants:', data)), // Log data
+      catchError(err => {
+        console.error('Error fetching apprenants', err);
+        return of([]); // Return an empty array on error
+      })
+    );
   }
 
-  // Method to get apprenant by ID
   getApprenantById(id: number): Observable<Apprenant> {
-    return this.http.get<Apprenant>(`${this.baseUrl}/getApprenants/${id}`);
+    return this.http.get<Apprenant>(`${this.baseUrl}/getApprenants/${id}`, { headers: this.createAuthorizationHeader() });
   }
 
-  // Method to add an apprenant
+
   addApprenant(apprenant: Apprenant): Observable<any> {
-    return this.http.post(`${this.baseUrl}/add`, apprenant);
-  }
+    const token = localStorage.getItem('token'); // Retrieve the token
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}` // Add the token to the headers
+    });
 
-  // Method to update apprenant details
+    return this.http.post(`${this.baseUrl}/add`, apprenant, { headers });
+  }
   updateApprenant(id: number, apprenant: Apprenant): Observable<Apprenant> {
-    return this.http.put<Apprenant>(`${this.baseUrl}/edit/${id}`, apprenant);
+    return this.http.put<Apprenant>(`${this.baseUrl}/edit/${id}`, apprenant, { headers: this.createAuthorizationHeader() });
   }
 
-  // Method to delete an apprenant
   deleteApprenant(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/delete/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/delete/${id}`, { headers: this.createAuthorizationHeader() });
+  }
+  // New method to count Apprenants
+  countApprenants(): Observable<number> {
+    return this.http.get<number>(`${this.baseUrl}/count`, { headers: this.createAuthorizationHeader() }).pipe(
+      tap(count => console.log('Counted Apprenants:', count)), // Log count
+      catchError(err => {
+        console.error('Error counting apprenants', err);
+        return of(0); // Return 0 on error
+      })
+    );
   }
 }

@@ -7,6 +7,7 @@ import com.example.E_stack.entities.Apprenant;
 import com.example.E_stack.enums.Role;
 import com.example.E_stack.mapper.ApprenantMapper;
 import com.example.E_stack.reposeitories.ApprenantRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,10 +22,12 @@ public class ApprenantsServiceImpl implements ApprenantsService {
 
     private final ApprenantRepository apprenantRepository;
     private final ApprenantMapper apprenantMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public ApprenantsServiceImpl(ApprenantRepository apprenantRepository, ApprenantMapper apprenantMapper) {
+    public ApprenantsServiceImpl(ApprenantRepository apprenantRepository, ApprenantMapper apprenantMapper, PasswordEncoder passwordEncoder) {
         this.apprenantRepository = apprenantRepository;
         this.apprenantMapper = apprenantMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -78,9 +81,20 @@ public class ApprenantsServiceImpl implements ApprenantsService {
         Apprenant existingApprenant = apprenantRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Apprenant not found with id: " + id));
         Apprenant apprenant = apprenantMapper.toEntity(apprenantDTO);
+        apprenant.setPassword(passwordEncoder.encode(apprenantDTO.getPassword()));
         apprenant.setId(existingApprenant.getId()); // Maintain existing ID
         return apprenantMapper.toDto(apprenantRepository.save(apprenant));
     }
+    /**
+     * Counts the total number of learners (Apprenants).
+     *
+     * @return the total number of learners
+     */
+    @Override
+    public long countApprenants() {
+        return apprenantRepository.count();
+    }
+
 
     /**
      * Deletes a learner (Apprenant) by ID.

@@ -20,11 +20,12 @@ export class AnswerService {
       { headers: this.createAuthorizationHeader() });
   }
 
-  postAnswerImage(file: FormData, answerId: number): Observable<any> {
-    // Don't set Content-Type header for FormData - browser will set it automatically with boundary
-    return this.http.post<[]>(BASIC_URL + `image/${answerId}`, file,
+  postAnswerImage(formData: FormData, answerId: number): Observable<any> {
+    return this.http.post(`${BASIC_URL}image/${answerId}`, formData,
       { headers: this.createAuthorizationHeader() });
   }
+
+
 
   approuveAnswer(answerId: number): Observable<any> {
     return this.http.get<[]>(BASIC_URL + `answer/${answerId}`,

@@ -1,0 +1,52 @@
+/* Container for the dialog content */
+mat-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Adds spacing between form fields */
+  padding-bottom: 20px;
+}
+
+/* Form fields styling */
+mat-form-field {
+  width: 100%;
+}
+
+/* Actions buttons at the bottom */
+mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end; /* Align buttons to the right */
+  gap: 10px; /* Add spacing between the Cancel and Save buttons */
+  padding-top: 10px;
+}
+
+/* Primary save button styling */
+button[mat-button][color="primary"] {
+  background-color: #1976d2; /* Primary color for save button */
+  color: white;
+}
+
+button[mat-button][color="primary"]:hover {
+  background-color: #1565c0; /* Darken on hover */
+}
+
+/* Cancel button styling */
+button[mat-button] {
+  color: #757575;
+}
+
+button[mat-button]:hover {
+  background-color: rgba(0, 0, 0, 0.04); /* Light gray hover effect for Cancel */
+}
+
+/* Loading state for Save button */
+button[mat-button][color="primary"][disabled] {
+  background-color: #bbdefb; /* Light blue for disabled button */
+}
+
+/* Customize mat-dialog-title */
+mat-dialog-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #424242;
+  padding-bottom: 20px;
+}

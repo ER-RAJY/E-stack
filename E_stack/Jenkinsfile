@@ -13,25 +13,25 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/ER-RAJY/E-stack.git'
             }
         }
-        stage('Build & Test filRouge') {
-                    steps {
-
-                            withMaven(maven: 'mvn') {
-                                bat 'mvn clean install'
-
-                        }
-                    }
+        stage('Build & Test') {
+            steps {
+                withMaven(maven: 'mvn') {
+                    bat 'mvn clean install'
                 }
-
+            }
+        }
         stage('SonarQube Analysis') {
-                    steps {
-                        script {
-                            def scannerHome = tool 'Sonar'
-
-                                bat "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=. -Dsonar.sources=. -Dsonar.host.url=${SONARQUBE_SERVER} -Dsonar.login=${SONARQUBE_TOKEN} -Dsonar.java.binaries=target/classes"
-
-                        }
-                    }
+            steps {
+                script {
+                    def scannerHome = tool 'Sonar'
+                    bat "${scannerHome}/bin/sonar-scanner " +
+                        "-Dsonar.projectKey=E_stack " + // Fixed project key
+                        "-Dsonar.sources=. " +
+                        "-Dsonar.host.url=${SONARQUBE_SERVER} " +
+                        "-Dsonar.login=${SONAR_TOKEN} " + // Fixed variable name
+                        "-Dsonar.java.binaries=target/classes"
+                }
+            }
         }
     }
 }

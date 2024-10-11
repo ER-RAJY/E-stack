@@ -6,8 +6,7 @@ pipeline {
     }
 
     environment {
-        SONAR_TOKEN = credentials('E-stack') // Better to use Jenkins credentials
-        SONARQUBE_SERVER = 'http://localhost:9000/'
+        SONAR_CREDS = credentials('E-stack') // Using the exact credential ID you created
     }
 
     stages {
@@ -27,12 +26,14 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonar') { // This requires SonarQube Scanner plugin
+                withSonarQubeEnv('SonarQube') { // Match this name with your Jenkins SonarQube installation name
                     dir('E_stack') {
-                        bat "mvn sonar:sonar " +
-                            "-Dsonar.projectKey=E_stack " +
-                            "-Dsonar.host.url=${SONARQUBE_SERVER} " +
-                            "-Dsonar.login=${SONAR_TOKEN}"
+                        bat """
+                            mvn sonar:sonar \
+                            -Dsonar.projectKey=E_stack \
+                            -Dsonar.host.url=http://localhost:9000 \
+                            -Dsonar.token=%SONAR_CREDS_PSW%
+                        """
                     }
                 }
             }

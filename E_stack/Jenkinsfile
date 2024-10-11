@@ -10,25 +10,28 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/manbarmohamed/Fill-Rouge.git'
+                git branch: 'main', url: 'https://github.com/ER-RAJY/E-stack.git'
             }
         }
         stage('Build & Test filRouge') {
-            steps {
-                dir('E_stack') {
-                    bat 'mvn clean install'
-                }
-            }
-        }
-        stage('SonarQube Analysis') {
-            steps {
-                script {
-                    def scannerHome = tool 'sonar'
-                    dir('E_stack') {
-                        bat "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=E_stack -Dsonar.sources=. -Dsonar.host.url=${SONARQUBE_SERVER} -Dsonar.login=${SONAR_TOKEN} -Dsonar.java.binaries=target/classes"
+                    steps {
+
+                            withMaven(maven: 'mvn') {
+                                bat 'mvn clean install'
+
+                        }
                     }
                 }
-            }
+
+        stage('SonarQube Analysis') {
+                    steps {
+                        script {
+                            def scannerHome = tool 'Sonar'
+
+                                bat "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=. -Dsonar.sources=. -Dsonar.host.url=${SONARQUBE_SERVER} -Dsonar.login=${SONARQUBE_TOKEN} -Dsonar.java.binaries=target/classes"
+
+                        }
+                    }
         }
     }
 }

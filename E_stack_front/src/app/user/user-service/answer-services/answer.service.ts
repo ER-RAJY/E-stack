@@ -15,15 +15,17 @@ export class AnswerService {
     return this.storageService.getapprenantId(); // Use instance method
   }
   postAnswer(answerDto: any): Observable<any> {
-    answerDto.apprenantId = this.getapprenantId();
     return this.http.post(BASIC_URL + 'answer', answerDto,
-      { headers: this.createAuthorizationHeader() });
+      { headers: this.createAuthorizationHeader() })
   }
-
-  postAnswerImage(formData: FormData, answerId: number): Observable<any> {
-    return this.http.post(`${BASIC_URL}image/${answerId}`, formData,
-      { headers: this.createAuthorizationHeader() });
-  }
+  // headersImage = new HttpHeaders({
+  //   'Authorization': 'Bearer ' + StorageService.getToken(),
+  //   'Content-Type': 'multipart/form-data' // Set the correct Content-Type
+  // });
+  postAnswerImage(file: FormData, answerId: number): Observable<any> {
+    return this.http.post<[]>(BASIC_URL + `image/${answerId}`, file,
+      { headers: this.createAuthorizationHeader() })
+  };
 
 
 

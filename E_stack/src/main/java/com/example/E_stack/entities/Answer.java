@@ -10,6 +10,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -27,6 +28,7 @@ public class Answer {
     private Date createdDate; // Date when the answer was created
 
     private boolean approved = false;
+    private  int voteCount = 0;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "apprenant_id", nullable = false)
@@ -39,6 +41,12 @@ public class Answer {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private Question question; // Question to which the answer belongs
+
+//    @OneToMany(mappedBy = "annswer",cascade =CascadeType.ALL )
+//    @JsonIgnore
+//    private List<AnswerVote> answerVoteList;
+
+
 
     // Convert Answer entity to AnswerDto
     public AnswerDto getAnswerDto() {

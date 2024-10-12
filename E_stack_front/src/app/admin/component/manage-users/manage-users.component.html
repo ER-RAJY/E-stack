@@ -1,32 +1,63 @@
 <div class="container">
   <h2>Apprenant List</h2>
 
-  <div *ngIf="loading" class="alert alert-info">Loading apprenants...</div>
+  <!-- Search Bar -->
+  <mat-form-field appearance="outline" class="search-bar">
+    <mat-label>Search Apprenants</mat-label>
+    <input matInput placeholder="Search by name or email" [(ngModel)]="searchTerm" (ngModelChange)="filterApprenants()">
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
 
-  <div *ngIf="errorMessage" class="alert alert-danger">
-    {{ errorMessage }}
-  </div>
+  <!-- Loading indicator -->
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
 
-  <table class="table table-striped" *ngIf="!loading && !errorMessage">
-    <thead>
-    <tr>
-      <th>ID</th>
-      <th>Nom</th>
-      <th>Email</th>
-      <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let apprenant of apprenants">
-      <td>{{ apprenant.id }}</td>
-      <td>{{ apprenant.nom }}</td>
-      <td>{{ apprenant.email }}</td>
-      <td>
-        <button class="btn btn-warning" (click)="editApprenant(apprenant)">Edit</button>
-        <button class="btn btn-danger" (click)="deleteApprenant(apprenant.id)">Delete</button>
-      </td>
+  <!-- Error message -->
+  <mat-card *ngIf="errorMessage" class="alert">
+    <mat-card-content>
+      <mat-icon color="warn">error</mat-icon> {{ errorMessage }}
+    </mat-card-content>
+  </mat-card>
 
-    </tr>
-    </tbody>
-  </table>
+  <!-- Apprenant table -->
+  <mat-card *ngIf="!loading && !errorMessage">
+    <!-- Button to open the dialog -->
+    <div class="button-container">
+      <button mat-raised-button color="primary" class="add-button" (click)="openAddApprenantDialog()">
+        Add New Apprenant
+      </button>
+    </div>
+    <table mat-table [dataSource]="filteredApprenants" class="mat-elevation-z8">
+      <!-- Table Columns -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>  </th>
+        <td mat-cell *matCellDef="let apprenant"></td>
+      </ng-container>
+
+      <ng-container matColumnDef="nom">
+        <th mat-header-cell *matHeaderCellDef>Nom</th>
+        <td mat-cell *matCellDef="let apprenant">{{ apprenant.nom }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let apprenant">{{ apprenant.email }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let apprenant">
+          <button mat-raised-button color="accent" (click)="editApprenant(apprenant)">
+            Edit
+          </button>
+          <button mat-raised-button color="warn" (click)="deleteApprenant(apprenant.id)">
+            Delete
+          </button>
+        </td>
+      </ng-container>
+
+      <!-- Header and Row Declarations -->
+      <tr mat-header-row *matHeaderRowDef="['id', 'nom', 'email', 'actions']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['id', 'nom', 'email', 'actions'];"></tr>
+    </table>
+  </mat-card>
 </div>

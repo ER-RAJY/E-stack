@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { QuestionService } from '../../user-service/question-service/question.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -7,7 +7,7 @@ import { StorageService } from "../../../auth-services/storage-service/storage.s
 import { AnswerService } from "../../user-service/answer-services/answer.service";
 import { MatDialog } from '@angular/material/dialog';
 import { EditAnswerComponent } from "../edit-answer/edit-answer.component";
-import Swal from "sweetalert2"; // Import MatDialog
+import Swal from "sweetalert2";
 
 @Component({
   selector: 'app-views-question',
@@ -15,6 +15,8 @@ import Swal from "sweetalert2"; // Import MatDialog
   styleUrls: ['./views-question.component.scss']
 })
 export class ViewsQuestionComponent implements OnInit {
+  @ViewChild('fileInput') fileInput!: ElementRef;
+
   questionId: number = this.activatedRoute.snapshot.params["questionId"];
   question: any;
   validateForm!: FormGroup;
@@ -23,6 +25,8 @@ export class ViewsQuestionComponent implements OnInit {
   formData: FormData = new FormData();
   answers: any[] = [];
   displayButton: boolean = false;
+  searchQuestion: string = '';
+  searchTag: string = '';
 
   constructor(
     private questionService: QuestionService,
@@ -43,46 +47,68 @@ export class ViewsQuestionComponent implements OnInit {
   }
 
   getQuestionById() {
-    this.questionService.getQuestionById(this.questionId).subscribe(data => {
-      console.log("Get Question By Id questionService", data);
-      this.question = data.questionDTO;
-      this.answers = []; // Clear the answers array before repopulating
+    this.questionService.getQuestionById(this.questionId).subscribe(
+      data => {
+        console.log("Get Question By Id questionService", data);
+        this.question = data.questionDTO;
+        this.answers = data.answerDtoList || [];
 
-      // Iterate over the answer list and ensure approved is correctly mapped
-      data.answerDtoList.forEach((element: any) => {
-        if (element.file != null) {
-          element.convertedImg = "data:image/jpeg;base64," + element.file.data;
-        }
-        element.approved = element.approved || false; // Default to false if not present
-        this.answers.push(element);
-      });
+        // Process each answer
+        this.answers.forEach(answer => {
+          if (answer.file && answer.file.data) {
+            answer.convertedImg = "data:image/jpeg;base64," + answer.file.data;
+          }
+          answer.approved = answer.approved || false;
+        });
 
-      // Update displayButton logic if the user is the owner of the question
-      if (this.storageService.getapprenantId() === this.question.apprenantId) {
-        this.displayButton = true;
+        // Update displayButton logic if the user is the owner of the question
+        this.displayButton = this.storageService.getapprenantId() === this.question.apprenantId;
+      },
+      error => {
+        console.error("Error fetching question:", error);
+        this.snackBar.open("Failed to load question and answers", "Close", {
+          duration: 5000,
+        });
       }
-    });
+    );
   }
 
   addAnswer() {
+    if (this.validateForm.invalid) {
+      this.snackBar.open("Please fill in all required fields", "Close", {
+        duration: 5000,
+      });
+      return;
+    }
+
     const data = this.validateForm.value;
     data.questionId = this.questionId;
     data.apprenantId = this.storageService.getapprenantId();
-    this.formData.append('multipartFile', this.selectedFile!);
-    console.log("idQuestion===", data.questionId, "UserId===", data.apprenantId);
+
     this.answerService.postAnswer(data).subscribe(
       (res: { id: number | null; }) => {
         this.validateForm.reset();
         if (res.id != null) {
-          this.answerService.postAnswerImage(this.formData, res.id).subscribe(
-            (response: any) => {
-              console.log("Answer image added", response);
-            }
-          );
+          if (this.selectedFile) {
+            this.formData = new FormData();
+            this.formData.append('multipartFile', this.selectedFile);
+            this.answerService.postAnswerImage(this.formData, res.id).subscribe(
+              (response: any) => {
+                console.log("Answer image added", response);
+                this.getQuestionById(); // Refresh after image upload
+                this.resetFileInput();
+              },
+              (error) => {
+                console.error("Failed to upload image", error);
+                this.getQuestionById(); // Refresh even if image upload fails
+              }
+            );
+          } else {
+            this.getQuestionById(); // Refresh immediately if no image
+          }
           this.snackBar.open("Answer added successfully", "Close", {
             duration: 5000,
           });
-          this.getQuestionById(); // Refresh the question and answers list
         } else {
           this.snackBar.open("Failed to add answer", "Close", {
             duration: 5000,
@@ -110,19 +136,27 @@ export class ViewsQuestionComponent implements OnInit {
         questionId: this.questionId,
         voteType: voteType
       }
-      this.questionService.addVoteToQuestion(data).subscribe(res => {
-        console.log("********** addVote res : ", res);
-        if (res != null) {
-          this.snackBar.open("Vote added successfully", "Close", {
-            duration: 5000,
-          });
-          this.getQuestionById();
-        } else {
-          this.snackBar.open("Vote added failed", "Close", {
+      this.questionService.addVoteToQuestion(data).subscribe(
+        res => {
+          console.log("addVote response:", res);
+          if (res != null) {
+            this.snackBar.open("Vote added successfully", "Close", {
+              duration: 5000,
+            });
+            this.getQuestionById(); // Refresh to show updated vote count
+          } else {
+            this.snackBar.open("Vote addition failed", "Close", {
+              duration: 5000,
+            });
+          }
+        },
+        error => {
+          console.error("Error adding vote:", error);
+          this.snackBar.open("Failed to add vote", "Close", {
             duration: 5000,
           });
         }
-      });
+      );
     }
   }
 
@@ -162,26 +196,30 @@ export class ViewsQuestionComponent implements OnInit {
     });
   }
 
-  onFileSelectedd(event: any) {
-    this.selectedFile = event.target.files[0];
-    this.previewImage();
-    console.log("********** selected file", this.selectedFile);
-  }
-
   onFileSelected(event: any) {
     const file: File = event.target.files[0];
     if (file) {
       this.selectedFile = file;
+      this.previewImage();
     }
-    this.previewImage();
   }
 
   previewImage() {
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.imagePreview = reader.result;
-    };
-    reader.readAsDataURL(this.selectedFile!);
+    if (this.selectedFile) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result;
+      };
+      reader.readAsDataURL(this.selectedFile);
+    }
+  }
+
+  resetFileInput() {
+    this.selectedFile = null;
+    this.imagePreview = null;
+    if (this.fileInput) {
+      this.fileInput.nativeElement.value = '';
+    }
   }
 
   deleteAnswer(answerId: number): void {

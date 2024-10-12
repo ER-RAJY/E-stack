@@ -74,13 +74,37 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public SingleQuestionDto getQuestionById(Long apprenantId, Long questionId) {
-        Question existingQuestion = questionRepository.findById(questionId)
-                .orElseThrow(() -> new QuestionNotFoundException("Question not found with ID: " + questionId));
+        Optional<Question> optionalQuestion = questionRepository.findById(questionId);
 
-        SingleQuestionDto singleQuestionDto = new SingleQuestionDto();
-        singleQuestionDto.setQuestionDTO(handleVoteCheck(existingQuestion, apprenantId));
-        singleQuestionDto.setAnswerDtoList(getApprovedAnswersForQuestion(questionId));
-        return singleQuestionDto;
+        if (optionalQuestion.isPresent()) {
+            SingleQuestionDto singleQuestionDto = new SingleQuestionDto();
+            Question existingQuestion = optionalQuestion.get();
+
+            Optional<QuestionVote> optionalQuestionVote = existingQuestion.getQuestionVoteList().stream()
+                    .filter(vote -> vote.getApprenant().getId().equals(apprenantId))
+                    .findFirst();
+            QuestionDTO questionDto = optionalQuestion.get().getQuestionDto();
+            questionDto.setVoted(0);
+            if (optionalQuestionVote.isPresent()) {
+                if (optionalQuestionVote.get().getVoteType().equals(VoteType.UPVOTE)) {
+                    questionDto.setVoted(1);
+                } else {
+                    questionDto.setVoted(-1);
+                }
+            }
+
+            singleQuestionDto.setQuestionDTO(questionDto);
+            List<AnswerDto> answerDtoList = new ArrayList<>();
+            List<Answer> answerList = answerRepository.findAllByQuestionId(questionId);
+            for (Answer answer : answerList) {
+                AnswerDto answerDto = answer.getAnswerDto();
+                answerDto.setFile(imageRepository.findByAnswer(answer));
+                answerDtoList.add(answerDto);
+            }
+            singleQuestionDto.setAnswerDtoList(answerDtoList);
+            return singleQuestionDto;
+        }
+        return null;
     }
 
     @Override

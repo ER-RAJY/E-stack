@@ -11,6 +11,8 @@ import { EditApprenantDialogComponent } from '../edit-apprenant-dialog/edit-appr
 })
 export class ManageUsersComponent implements OnInit {
   apprenants: Apprenant[] = [];
+  filteredApprenants: Apprenant[] = [];
+  searchTerm: string = '';  // New property to bind to the search input
   errorMessage: string | null = null;
   loading: boolean = false;
 
@@ -25,6 +27,7 @@ export class ManageUsersComponent implements OnInit {
     this.apprenantService.getApprenants().subscribe(
       (data: Apprenant[]) => {
         this.apprenants = data;
+        this.filteredApprenants = data;  // Initially show all apprenants
         this.loading = false;
       },
       (error) => {
@@ -40,6 +43,7 @@ export class ManageUsersComponent implements OnInit {
       this.apprenantService.deleteApprenant(id).subscribe(
         () => {
           this.apprenants = this.apprenants.filter(a => a.id !== id);
+          this.filteredApprenants = this.filteredApprenants.filter(a => a.id !== id); // Update filtered list
         },
         error => {
           this.errorMessage = 'Failed to delete apprenant';
@@ -56,11 +60,30 @@ export class ManageUsersComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        const index = this.apprenants.findIndex(a => a.id === result.id);
-        if (index !== -1) {
-          this.apprenants[index] = result;
-        }
+        // Reload the list of apprenants to reflect the updated data
+        this.loadApprenants();
       }
     });
+  }
+
+  openAddApprenantDialog(): void {
+    const dialogRef = this.dialog.open(EditApprenantDialogComponent, {
+      width: '400px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Reload the list to include the newly added apprenant
+        this.loadApprenants();
+      }
+    });
+  }
+
+  // New method to filter apprenants based on search term
+  filterApprenants(): void {
+    this.filteredApprenants = this.apprenants.filter(apprenant =>
+      apprenant.nom.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+      apprenant.email.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
   }
 }

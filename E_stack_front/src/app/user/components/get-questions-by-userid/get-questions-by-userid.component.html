@@ -1,6 +1,6 @@
 <div style="min-height: 91vh; padding: 30px;" *ngIf="questions">
   <div>
-    <div class="container">
+    <mat-card class="container" style="padding: 20px;">
       <h1>My Questions</h1>
       <ng-container *ngIf="questions.length === 0; else questionList">
         <mat-card class="empty-message">
@@ -12,32 +12,40 @@
       </ng-container>
 
       <ng-template #questionList>
-        <div class="child" *ngFor="let question of questions">
-          <h2 class="question-title">
-            <a routerLink="/user/question/{{question.id}}">{{question.title}}</a>
-          </h2>
-          <div class="question-content">
-            <p>{{question.body}}</p>
-            <div class="tags-container">
-              <mat-chip-listbox>
-                <mat-chip color="primary" *ngFor="let tag of question.tags">{{tag}}</mat-chip>
-              </mat-chip-listbox>
-            </div>
-            <hr>
-            <h5>
-              Posted By: <b>{{question.username}}</b> -
-              Posted On: <b>{{question.createdDate | date: 'dd , MM , YYYY'}}</b>
-            </h5>
-            <!-- Add Delete Button -->
-            <button mat-raised-button color="warn" (click)="deleteQuestion(question.id)">Delete</button>
-          </div>
+        <div *ngFor="let question of questions" style="margin-bottom: 20px;">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>
+                <a routerLink="/user/question/{{question.id}}">{{question.title}}</a>
+              </mat-card-title>
+              <mat-card-subtitle>
+                Posted By: <b>{{question.username}}</b> -
+                Posted On: <b>{{question.createdDate | date: 'dd, MM, YYYY'}}</b>
+              </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <p>{{question.body}}</p>
+              <div class="tags-container">
+                <mat-chip-listbox>
+                  <mat-chip color="primary" *ngFor="let tag of question.tags">{{tag}}</mat-chip>
+                </mat-chip-listbox>
+              </div>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-raised-button color="warn" (click)="deleteQuestion(question.id)">Delete</button>
+            </mat-card-actions>
+          </mat-card>
         </div>
       </ng-template>
 
-      <div class="pagination">
-        <mat-paginator [length]="total" [pageIndex]="pageNumber" [pageSize]="5"
-                       (page)="pageIndexChange($event)"></mat-paginator>
+      <div class="pagination" style="margin-top: 20px;">
+        <mat-paginator
+          [length]="total"
+          [pageIndex]="pageNumber"
+          [pageSize]="5"
+          (page)="pageIndexChange($event)">
+        </mat-paginator>
       </div>
-    </div>
+    </mat-card>
   </div>
 </div>

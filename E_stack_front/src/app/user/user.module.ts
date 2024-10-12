@@ -13,7 +13,7 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatInputModule } from "@angular/material/input";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatIconModule } from "@angular/material/icon";
-import { ReactiveFormsModule } from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { MatLegacyPaginatorModule } from "@angular/material/legacy-paginator"; // Import MatPaginatorModule
 import { MatCardModule } from "@angular/material/card";
 import { MatDialogModule } from '@angular/material/dialog';
@@ -27,18 +27,19 @@ import { MatButtonModule } from "@angular/material/button";
     GetQuestionsByUseridComponent,
     EditAnswerComponent
   ],
-  imports: [
-    CommonModule,
-    UserRoutingModule,
-    MatProgressSpinnerModule,
-    MatInputModule,
-    MatChipsModule,
-    MatIconModule,
-    ReactiveFormsModule,
-    MatLegacyPaginatorModule, // Add this line to import MatPaginator
-    MatCardModule,
-    MatDialogModule,
-    MatButtonModule,
-  ]
+    imports: [
+        CommonModule,
+        UserRoutingModule,
+        MatProgressSpinnerModule,
+        MatInputModule,
+        MatChipsModule,
+        MatIconModule,
+        ReactiveFormsModule,
+        MatLegacyPaginatorModule, // Add this line to import MatPaginator
+        MatCardModule,
+        MatDialogModule,
+        MatButtonModule,
+        FormsModule,
+    ]
 })
 export class UserModule { }

@@ -2,11 +2,13 @@ pipeline {
     agent any
 
     tools {
+
+        jdk 'jdk-21'
         maven 'mvn'
     }
 
     environment {
-        SONAR_CREDS = credentials('E-stack') // Using the exact credential ID you created
+        SONAR_CREDS = credentials('E-stack') // استخدم المعرف الصحيح الذي أنشأته
     }
 
     stages {
@@ -26,7 +28,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') { // Match this name with your Jenkins SonarQube installation name
+                withSonarQubeEnv('SonarQube') { // تأكد من أن هذا الاسم يتطابق مع إعداد SonarQube في Jenkins
                     dir('E_stack') {
                         bat """
                             mvn sonar:sonar \

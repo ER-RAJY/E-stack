@@ -36,13 +36,26 @@ export class ApprenantService {
 
 
   addApprenant(apprenant: Apprenant): Observable<any> {
-    const token = localStorage.getItem('token'); // Retrieve the token
+    const token = localStorage.getItem('access_token'); // Use the correct key for your token
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}` // Add the token to the headers
+      'Authorization': `Bearer ${token}` // Make sure this is set correctly
     });
 
-    return this.http.post(`${this.baseUrl}/add`, apprenant, { headers });
+    console.log('Adding Apprenant with headers:', headers); // Debug log to check headers
+
+    return this.http.post(`${this.baseUrl}/add`, apprenant, { headers }).pipe(
+      tap(response => {
+        console.log('Response from server on add:', response); // Log server response
+      }),
+      catchError(err => {
+        console.error('Error adding apprenant:', err); // Log error
+        return of(null); // Handle error gracefully
+      })
+    );
+
+
+  return this.http.post(`${this.baseUrl}/add`, apprenant, { headers });
   }
   updateApprenant(id: number, apprenant: Apprenant): Observable<Apprenant> {
     return this.http.put<Apprenant>(`${this.baseUrl}/edit/${id}`, apprenant, { headers: this.createAuthorizationHeader() });

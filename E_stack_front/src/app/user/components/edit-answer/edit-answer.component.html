@@ -1,23 +1,23 @@
-<div class="edit-answer-container">
-  <h2>Edit Answer</h2>
-  <form [formGroup]="validateForm" (ngSubmit)="addAnswer()">
-    <div class="form-field">
-      <mat-form-field appearance="fill">
-        <mat-label>Answer Body</mat-label>
-        <textarea matInput rows="4" placeholder="Edit your answer..." formControlName="body"></textarea>
-        <mat-error *ngIf="validateForm.get('body')?.invalid && (validateForm.get('body')?.touched || validateForm.get('body')?.dirty)">
-          Answer body is required.
-        </mat-error>
-      </mat-form-field>
-    </div>
+<form [formGroup]="validateForm" (ngSubmit)="editAnswer()">
+  <mat-form-field appearance="fill">
+    <mat-label>Answer</mat-label>
+    <textarea matInput formControlName="body" placeholder="Enter your answer"></textarea>
+    <mat-error *ngIf="validateForm.get('body')?.hasError('required')">
+      Answer is required
+    </mat-error>
+  </mat-form-field>
 
-    <div class="form-field">
-      <div class="image-preview" *ngIf="imagePreview">
-        <img [src]="imagePreview" height="100" alt="Image Preview">
-      </div>
-      <input id="file" type="file" accept="image/png, image/jpeg" (change)="onFileSelected($event)">
-    </div>
+  <!-- File upload section -->
+  <input type="file" (change)="onFileSelected($event)">
+  <img *ngIf="imagePreview" [src]="imagePreview" alt="Image Preview" class="image-preview">
 
-    <button mat-raised-button color="accent" [disabled]="validateForm.invalid">Update Answer</button>
-  </form>
-</div>
+  <!-- Error message -->
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+
+  <!-- Submit and Cancel buttons -->
+  <button mat-button color="primary" type="submit" [disabled]="isLoading">Save</button>
+  <button mat-button color="warn" type="button" (click)="onCancel()">Cancel</button>
+
+  <!-- Loading spinner -->
+  <mat-progress-spinner *ngIf="isLoading" mode="indeterminate"></mat-progress-spinner>
+</form>

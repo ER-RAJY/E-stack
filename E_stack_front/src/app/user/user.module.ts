@@ -25,7 +25,8 @@ import { MatButtonModule } from "@angular/material/button";
     PostQuestionComponent,
     ViewsQuestionComponent,
     GetQuestionsByUseridComponent,
-    EditAnswerComponent
+    EditAnswerComponent,
+
   ],
     imports: [
         CommonModule,

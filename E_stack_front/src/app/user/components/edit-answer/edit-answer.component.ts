@@ -25,18 +25,18 @@ export class EditAnswerComponent implements OnInit {
     private router: Router
   ) {
     this.validateForm = this.fb.group({
-      body: ['', Validators.required]
+      body: ['', Validators.required]  // Form control for answer body
     });
   }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
-      this.router.navigate(['/']); // or handle error appropriately
+      this.router.navigate(['/']); // Navigate to home if no ID is found
       return;
     }
     this.answerId = Number(id);
-    this.loadAnswer();
+    this.loadAnswer();  // Load existing answer data
   }
 
   loadAnswer() {
@@ -46,33 +46,32 @@ export class EditAnswerComponent implements OnInit {
         catchError(error => {
           console.error('Failed to load answer', error);
           this.errorMessage = 'Failed to load answer. Please try again.';
-          return of(null);
+          return of(null);  // Return an empty observable to prevent app crash
         }),
         finalize(() => this.isLoading = false)
       )
       .subscribe(answer => {
         if (answer) {
-          this.validateForm.patchValue({
-            body: answer.body
-          });
+          this.validateForm.patchValue({ body: answer.body });  // Populate form with answer data
         }
       });
   }
 
-  addAnswer() {
+  // Method to handle form submission for editing an answer
+  editAnswer() {
     if (this.validateForm.valid) {
       this.isLoading = true;
       this.errorMessage = null;
 
       let answerData: any;
 
+      // Handling file upload scenario
       if (this.selectedFile) {
-        // If there's a file, use FormData
         answerData = new FormData();
         answerData.append('body', this.validateForm.value.body);
         answerData.append('file', this.selectedFile);
       } else {
-        // If no file, just send JSON
+        // Only send body if no file is selected
         answerData = {
           body: this.validateForm.value.body
         };
@@ -89,25 +88,32 @@ export class EditAnswerComponent implements OnInit {
         )
         .subscribe(response => {
           if (response) {
+            // Clear form and file upload preview on success
             this.validateForm.reset();
             this.selectedFile = null;
             this.imagePreview = null;
-            this.router.navigate(['/user/dashboard']); // Adjust route as needed
+            this.router.navigate(['/user/dashboard']);  // Navigate to dashboard
           }
         });
     }
   }
 
+  // Method to handle file selection and preview
   onFileSelected(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
       this.selectedFile = file;
       const reader = new FileReader();
-      reader.onload = () => this.imagePreview = reader.result as string;
+      reader.onload = () => this.imagePreview = reader.result as string;  // Generate image preview
       reader.readAsDataURL(file);
     } else {
       this.selectedFile = null;
-      this.imagePreview = null;
+      this.imagePreview = null;  // Clear preview if no file is selected
     }
+  }
+
+  // Method to handle cancel action (Optional)
+  onCancel() {
+    this.router.navigate(['/user/dashboard']);  // Navigate back without saving changes
   }
 }

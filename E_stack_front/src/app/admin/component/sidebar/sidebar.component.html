@@ -15,14 +15,12 @@
         <span matListItemTitle>Users</span>
       </a>
 
-
-
       <a mat-list-item routerLink="/admin/settings" routerLinkActive="active-link">
         <mat-icon matListItemIcon>school</mat-icon>
         <span matListItemTitle>Questions</span>
       </a>
 
-      <a mat-list-item (click)="logout()" class="logout-item">
+      <a mat-list-item (click)="logout()" routerLink="/login" class="logout-item">
         <mat-icon matListItemIcon>logout</mat-icon>
         <span matListItemTitle>Logout</span>
       </a>
@@ -31,7 +29,7 @@
 
   <mat-sidenav-content>
     <mat-toolbar>
-      <button mat-icon-button (click)="toggleDrawer()"> <!-- Calls toggleDrawer method -->
+      <button mat-icon-button (click)="toggleDrawer()">
         <mat-icon>menu</mat-icon>
       </button>
       <span class="toolbar-spacer"></span>

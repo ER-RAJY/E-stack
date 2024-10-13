@@ -11,7 +11,7 @@ const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent, canActivate: [UserGuard] },
   { path: 'question', component: PostQuestionComponent },
   { path: 'question/:questionId', component: ViewsQuestionComponent },
-  { path: "my_questions", component: GetQuestionsByUseridComponent, canActivate: [UserGuard] },
+  { path: 'my_questions', component: GetQuestionsByUseridComponent, canActivate: [UserGuard] },
   { path: 'edit-answer/:id', component: EditAnswerComponent },
 ];
 

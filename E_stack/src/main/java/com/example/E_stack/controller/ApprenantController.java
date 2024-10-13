@@ -6,6 +6,7 @@ import com.example.E_stack.entities.Apprenant;
 import com.example.E_stack.entities.AuthenticationResponse;
 import com.example.E_stack.services.apprenant.ApprenantsService;
 import com.example.E_stack.services.auth.AuthenticationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ import java.util.Optional;
 public class ApprenantController {
 
     private final ApprenantsService apprenantsService;
-    @Autowired
+
     private AuthenticationService authenticationService;
 
     @Autowired

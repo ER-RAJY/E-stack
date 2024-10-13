@@ -19,8 +19,6 @@ import java.util.List;
 @DiscriminatorColumn(name="personne_type")
 public class Personne   implements UserDetails {
 
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -12,6 +12,7 @@ import com.example.E_stack.reposeitories.AnswerRepository;
 import com.example.E_stack.reposeitories.ApprenantRepository;
 import com.example.E_stack.reposeitories.ImageRepository;
 import com.example.E_stack.reposeitories.QuestionRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,22 +25,22 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+@RequiredArgsConstructor
 @Service
 public class QuestionServiceImpl implements QuestionService {
     public static final int SEARCH_RESULT_PER_PAGE = 5;
 
-    @Autowired
-    private AnswerRepository answerRepository;
 
-    @Autowired
-    private QuestionRepository questionRepository;
+    private final AnswerRepository answerRepository;
 
-    @Autowired
-    private ApprenantRepository apprenantRepository;
 
-    @Autowired
-    private ImageRepository imageRepository;
+    private final  QuestionRepository questionRepository;
+
+
+    private final  ApprenantRepository apprenantRepository;
+
+
+    private final  ImageRepository imageRepository;
 
     @Override
     public QuestionDTO addQuestion(QuestionDTO questionDto) {

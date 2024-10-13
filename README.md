@@ -27,7 +27,10 @@ Cette plateforme collaborative en ligne permet aux utilisateurs de poser des que
 - Node.js and npm (for Angular)
 - Java 8 or higher
 - Maven
-- MySQL database
+- Postgres database
+- test Mock
+- jenkins file
+- docker file
 
 ## Setup
 

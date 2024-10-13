@@ -1,7 +1,18 @@
 # E_stack Project
 
-This project is an online collaborative platform allowing users to post questions, answers, and votes. The platform includes authentication, voting mechanisms, and file upload capabilities. Below are all the available endpoints.
+## Contexte du Projet
 
+En tant que développeur full stack freelance, vous êtes chargé de créer un site web pour la communauté des apprenants de l'école **Enaa**, similaire à **Stack Overflow**. L'objectif est de fournir aux étudiants un espace où ils peuvent partager des problèmes académiques et trouver des solutions collaboratives. Ce site offrira une interface conviviale pour poser des questions, répondre aux questions des autres, et favoriser l'apprentissage mutuel.
+
+Cette plateforme collaborative en ligne permet aux utilisateurs de poser des questions, d’apporter des réponses, de voter pour les contenus, et de télécharger des fichiers pour enrichir les discussions. Elle inclut un système d'authentification, un mécanisme de votes, et des fonctionnalités de gestion des utilisateurs.
+
+## Fonctionnalités Clés
+
+- **Gestion des utilisateurs** : Inscription, connexion, déconnexion et gestion des rôles (apprenants, modérateurs, administrateurs).
+- **Poser des questions** : Les utilisateurs peuvent poser des questions sur des problèmes académiques.
+- **Répondre aux questions** : Les utilisateurs peuvent répondre aux questions des autres utilisateurs.
+- **Système de votes** : Possibilité de voter pour les meilleures questions et réponses.
+- **Modération** : Les administrateurs peuvent modérer le contenu et gérer les utilisateurs.
 ## Table of Contents
 
 1. [Vote Endpoints](#vote-endpoints)

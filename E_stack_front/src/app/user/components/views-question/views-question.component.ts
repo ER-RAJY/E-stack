@@ -25,6 +25,7 @@ export class ViewsQuestionComponent implements OnInit {
   formData: FormData = new FormData();
   answers: any[] = [];
   displayButton: boolean = false;
+  displayButtondelete: boolean = false;
   searchQuestion: string = '';
   searchTag: string = '';
 
@@ -52,11 +53,17 @@ export class ViewsQuestionComponent implements OnInit {
         console.log("Get Question By Id questionService", data);
         this.question = data.questionDTO;
         this.answers = data.answerDtoList || [];
-
+ console.log(this.answers)
         // Process each answer
         this.answers.forEach(answer => {
+          // Check if the logged-in user's ID matches the answer's author ID
+          answer.displayDeleteButton = this.storageService.getapprenantId() === answer.apprenantId;
+
+          console.log(this.displayButtondelete);
+
           if (answer.file && answer.file.data) {
             answer.convertedImg = "data:image/jpeg;base64," + answer.file.data;
+
           }
           answer.approved = answer.approved || false;
         });
@@ -223,7 +230,6 @@ export class ViewsQuestionComponent implements OnInit {
   }
 
   deleteAnswer(answerId: number): void {
-    // Use SweetAlert2 for confirmation
     Swal.fire({
       title: 'Are you sure?',
       text: 'You won’t be able to revert this!',

@@ -2,10 +2,7 @@ package com.example.E_stack.controller;
 
 import com.example.E_stack.dtos.AnswerDto;
 import com.example.E_stack.services.answer.AnswerService;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

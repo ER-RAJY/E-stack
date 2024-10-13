@@ -58,11 +58,11 @@
         <button mat-raised-button (click)="approuveAnswer(answer.id)" color="primary">Approve Answer</button>
       </div>
 
-      <!-- Edit and Delete Buttons for Answer -->
-      <div class="button-section" *ngIf="displayButton">
+      <div class="button-section" *ngIf="answer.displayDeleteButton">
         <button mat-button color="primary" (click)="toEdit(answer.id)">Edit</button>
         <button mat-button color="warn" (click)="deleteAnswer(answer.id)">Delete</button>
       </div>
+
 
     </div>
   </div>

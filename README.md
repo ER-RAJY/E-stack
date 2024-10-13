@@ -8,7 +8,7 @@ Cette plateforme collaborative en ligne permet aux utilisateurs de poser des que
 
 ## Fonctionnalités Clés
 
-- **Gestion des utilisateurs** : Inscription, connexion, déconnexion et gestion des rôles (apprenants, modérateurs, administrateurs).
+- **Gestion des utilisateurs** : Inscription, connexion, déconnexion et gestion des rôles (apprenants, administrateurs).
 - **Poser des questions** : Les utilisateurs peuvent poser des questions sur des problèmes académiques.
 - **Répondre aux questions** : Les utilisateurs peuvent répondre aux questions des autres utilisateurs.
 - **Système de votes** : Possibilité de voter pour les meilleures questions et réponses.

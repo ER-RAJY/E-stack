@@ -2,18 +2,21 @@ pipeline {
     agent any
 
     tools {
-
+        // Ensure the JDK name matches the defined JDK in Jenkins
         jdk 'jdk-21'
+        // Ensure the Maven name matches the defined Maven in Jenkins
         maven 'mvn'
     }
 
     environment {
-        SONAR_CREDS = credentials('E-stack') // استخدم المعرف الصحيح الذي أنشأته
+        // Using Jenkins credentials
+        SONAR_CREDS = credentials('E-stack') // Ensure this ID matches your Jenkins credentials
     }
 
     stages {
         stage('Checkout') {
             steps {
+                // Check out the main branch from the specified Git repository
                 git branch: 'main', url: 'https://github.com/ER-RAJY/E-stack.git'
             }
         }
@@ -21,6 +24,7 @@ pipeline {
         stage('Build & Test') {
             steps {
                 dir('E_stack') {
+                    // Build the project using Maven
                     bat 'mvn clean install'
                 }
             }
@@ -28,8 +32,9 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') { // تأكد من أن هذا الاسم يتطابق مع إعداد SonarQube في Jenkins
+                withSonarQubeEnv('SonarQube') { // Ensure this matches your SonarQube installation name
                     dir('E_stack') {
+                        // Run SonarQube analysis
                         bat """
                             mvn sonar:sonar \
                             -Dsonar.projectKey=E_stack \

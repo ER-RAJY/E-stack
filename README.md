@@ -98,7 +98,7 @@ Cette plateforme collaborative en ligne permet aux utilisateurs de poser des que
 ## Running the Application
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/E_stack.git
+   git clone https://github.com/ER-RAJY/E-stack.git
    ```
 2. Install the required dependencies using Maven:
    ```bash

@@ -46,7 +46,7 @@ public class AnswerServiceImplTest {
     void setUp() {
         // Initialize the DTO object
         answerDto = new AnswerDto();
-        answerDto.setBody("Sample answer body");
+        answerDto.setBody("Sample answer body ");
         answerDto.setApprenantId(1L);
         answerDto.setQuestionId(1L);
 

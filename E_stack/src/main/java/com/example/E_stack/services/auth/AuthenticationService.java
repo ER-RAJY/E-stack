@@ -5,6 +5,7 @@ import com.example.E_stack.entities.Apprenant;
 import com.example.E_stack.entities.AuthenticationResponse;
 import com.example.E_stack.entities.Personne;
 import com.example.E_stack.enums.Role;
+// Corrected typo
 import com.example.E_stack.exeption.PersonNotFoundException;
 import com.example.E_stack.reposeitories.AdminRepository;
 import com.example.E_stack.reposeitories.ApprenantRepository;
@@ -27,7 +28,7 @@ public class AuthenticationService {
     private final ApprenantRepository apprenantRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-    private final PerssoneRepository perssoneRepository; // Fixed typo here
+    private final PerssoneRepository personeRepository;// Corrected typo
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse authenticate(Personne request) {
@@ -35,7 +36,7 @@ public class AuthenticationService {
             log.debug("Attempting authentication for email: {}", request.getEmail());
 
             // First find the user
-            Personne person = perssoneRepository.findByEmail(request.getEmail())
+            Personne person = personeRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new PersonNotFoundException("No user found with email: " + request.getEmail()));
 
             // Attempt authentication
@@ -66,7 +67,6 @@ public class AuthenticationService {
         }
     }
 
-
     public AuthenticationResponse registerAdmin(Admin admin) {
         try {
             if (adminRepository.findByEmail(admin.getEmail()).isPresent()) {
@@ -82,7 +82,7 @@ public class AuthenticationService {
             Admin savedAdmin = adminRepository.save(newAdmin);
             String token = jwtService.generateToken(savedAdmin);
 
-            return new AuthenticationResponse(token, "Admin successfully registered", savedAdmin.getId(), savedAdmin.getRole().name()); // Assuming you have a method to get role name
+            return new AuthenticationResponse(token, "Admin successfully registered", savedAdmin.getId(), savedAdmin.getRole().name());
         } catch (Exception e) {
             log.error("Error registering admin: {}", e.getMessage(), e);
             return new AuthenticationResponse(null, "Registration failed", null, ""); // Provide a role value
@@ -104,7 +104,7 @@ public class AuthenticationService {
             Apprenant savedApprenant = apprenantRepository.save(newApprenant);
             String token = jwtService.generateToken(savedApprenant);
 
-            return new AuthenticationResponse(token, "Apprenant successfully registered", savedApprenant.getId(), savedApprenant.getRole().name()); // Assuming you have a method to get role name
+            return new AuthenticationResponse(token, "Apprenant successfully registered", savedApprenant.getId(), savedApprenant.getRole().name());
         } catch (Exception e) {
             log.error("Error registering apprenant: {}", e.getMessage(), e);
             return new AuthenticationResponse(null, "Registration failed", null, ""); // Provide a role value

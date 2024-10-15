@@ -3,6 +3,9 @@ package com.example.E_stack.services.question;
 import com.example.E_stack.dtos.AllQuestionResponseDto;
 import com.example.E_stack.dtos.QuestionDTO;
 import com.example.E_stack.dtos.SingleQuestionDto;
+import com.example.E_stack.entities.Question;
+
+import java.util.List;
 
 public interface QuestionService {
     QuestionDTO addQuestion(QuestionDTO questionDto);
@@ -15,4 +18,5 @@ public interface QuestionService {
     void deleteQuestionById(Long questionId);
 
     long countQuestions();
+    List<Question> searchByTitleOrBody(String keyword);
 }

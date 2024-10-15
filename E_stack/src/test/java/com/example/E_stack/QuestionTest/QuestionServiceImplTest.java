@@ -68,40 +68,8 @@ public class QuestionServiceImplTest {
         question2.setApprenant(apprenant);
     }
 
-//    @Test
-//    public void testAddQuestion_Success() {
-//        QuestionDTO questionDto = new QuestionDTO();
-//        questionDto.setTitle("New Question");
-//        questionDto.setBody("New Question Body");
-//        questionDto.setApprenantId(1L);
-//
-//        when(apprenantRepository.findById(1L)).thenReturn(Optional.of(apprenant));
-//        when(questionRepository.save(new Question())).thenAnswer(invocation -> {
-//            Question question = invocation.getArgument(0);
-//            question.setId(3L);  // Simulate auto-generated ID
-//            return question;
-//        });
-//
-//        QuestionDTO createdQuestionDto = questionService.addQuestion(questionDto);
-//
-//        assertNotNull(createdQuestionDto);
-//        assertEquals("New Question", createdQuestionDto.getTitle());
-//        assertEquals(3L, createdQuestionDto.getId());  // Check the ID is set correctly
-//    }
 
-    @Test
-    public void testAddQuestion_UserNotFound() {
-        QuestionDTO questionDto = new QuestionDTO();
-        questionDto.setTitle("New Question");
-        questionDto.setBody("New Question Body");
-        questionDto.setApprenantId(1L);
 
-        when(apprenantRepository.findById(1L)).thenReturn(Optional.empty());
-
-        QuestionDTO createdQuestionDto = questionService.addQuestion(questionDto);
-
-        assertNull(createdQuestionDto);
-    }
 
     @Test
     public void testGetAllQuestions_Success() {

@@ -14,19 +14,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/apprenants")
 public class ApprenantController {
 
     private final ApprenantsService apprenantsService;
 
-    private AuthenticationService authenticationService;
+    private final AuthenticationService authenticationService;
 
-    @Autowired
-    public ApprenantController(ApprenantsService apprenantsService) {
-        this.apprenantsService = apprenantsService;
-    }
 
 
 

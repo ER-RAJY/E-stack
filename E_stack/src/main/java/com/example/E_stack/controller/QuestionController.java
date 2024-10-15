@@ -3,11 +3,15 @@ package com.example.E_stack.controller;
 import com.example.E_stack.dtos.AllQuestionResponseDto;
 import com.example.E_stack.dtos.QuestionDTO;
 import com.example.E_stack.dtos.SingleQuestionDto;
+import com.example.E_stack.entities.Question;
 import com.example.E_stack.services.question.QuestionService;
 import lombok.RequiredArgsConstructor; // Use RequiredArgsConstructor for constructor injection
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor // For constructor injection
@@ -22,6 +26,10 @@ public class QuestionController {
                     .body("Failed to create question. Please check your input.");
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(createdQuestionDto);
+    }
+    @GetMapping("/search")
+    public ResponseEntity<List<Question>> searchByTitleOrBody(@RequestParam String keyword) {
+        return ResponseEntity.ok(questionService.searchByTitleOrBody(keyword));
     }
 
     @GetMapping("/questions/count")
@@ -68,4 +76,6 @@ public class QuestionController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
+
 }

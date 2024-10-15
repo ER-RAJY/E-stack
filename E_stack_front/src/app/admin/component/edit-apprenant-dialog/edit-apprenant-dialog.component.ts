@@ -14,9 +14,9 @@ export class EditApprenantDialogComponent implements OnInit {
   isLoading = false; // Loading state
 
   constructor(
-    public dialogRef: MatDialogRef<EditApprenantDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Apprenant,
-    private apprenantService: ApprenantService,
+    public dialogRef: MatDialogRef<EditApprenantDialogComponent>,  // Reference to the dialog
+    @Inject(MAT_DIALOG_DATA) public data: Apprenant,  // Injecting the data passed to the dialog
+    private apprenantService: ApprenantService,  // Service for managing apprenant data
     private snackBar: MatSnackBar // Inject MatSnackBar for notifications
   ) {
     this.apprenant = { ...data }; // Make a copy of the apprenant data
@@ -59,3 +59,6 @@ export class EditApprenantDialogComponent implements OnInit {
     this.dialogRef.close(); // Close the dialog without saving
   }
 }
+
+
+

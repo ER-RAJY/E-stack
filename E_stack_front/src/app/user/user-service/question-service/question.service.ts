@@ -19,8 +19,8 @@ export class QuestionService {
     });
   }
 
-  getAllQuestions(pageNumber: number): Observable<any> {
-    return this.http.get<any[]>(`${BASIC_URL}questions/${pageNumber}`, {
+  getAllQuestions(pageNumber: number, size: number): Observable<any> {
+    return this.http.get<any>(`${BASIC_URL}questions/${pageNumber}?size=${size}`, {
       headers: this.createAuthorizationHeader()
     });
   }
@@ -36,12 +36,18 @@ export class QuestionService {
       headers: this.createAuthorizationHeader()
     });
   }
+    searchByTitleOrBody(keyword: String): Observable<any> {
+    return this.http.get<any[]>(`${BASIC_URL}search/${this.getapprenantId()}/${keyword}`, {
+      headers: this.createAuthorizationHeader()
+    });
+  }
 
   addVoteToQuestion(voteQuestionDto: any): Observable<any> {
     return this.http.post<any[]>(`${BASIC_URL}vote`, voteQuestionDto, {
       headers: this.createAuthorizationHeader()
     });
   }
+
 
   deleteQuestion(questionId: number): Observable<any> {
     return this.http.delete(`${BASIC_URL}question/${questionId}`, {

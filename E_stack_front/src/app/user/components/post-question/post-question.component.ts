@@ -5,6 +5,7 @@ import {MatChipEditedEvent, MatChipInputEvent} from "@angular/material/chips";
 import {LiveAnnouncer} from "@angular/cdk/a11y";
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {COMMA, ENTER} from "@angular/cdk/keycodes";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-post-question',
@@ -16,6 +17,11 @@ export class PostQuestionComponent implements OnInit{
   isSubmitting!: boolean;
   addOnBlur: boolean = true;
   validateForm!: FormGroup;
+  constructor(private service : QuestionService,
+              private formBuilder: FormBuilder,
+              private snackBar: MatSnackBar,
+              private router : Router
+  ) { }
 
 
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
@@ -68,10 +74,7 @@ export class PostQuestionComponent implements OnInit{
     }
   }
 
-  constructor(private service : QuestionService,
-              private formBuilder: FormBuilder,
-              private snackBar: MatSnackBar,
-  ) { }
+
   ngOnInit() {
     this.validateForm = this.formBuilder.group({
       title: ['', Validators.required],
@@ -87,6 +90,7 @@ export class PostQuestionComponent implements OnInit{
         console.log(res);
         if(res.id != null ){
           this.snackBar.open("Question posted successfully!", "close", {duration: 5000});
+          this.router.navigate(["/user/dashboard"]);
         } else {
           this.snackBar.open("Something went wrong!", "close", {duration: 5000});
         }
@@ -96,6 +100,7 @@ export class PostQuestionComponent implements OnInit{
         this.snackBar.open("Failed to post question. Please try again.", "close", {duration: 5000});
       }
     });
+
   }
 
 }

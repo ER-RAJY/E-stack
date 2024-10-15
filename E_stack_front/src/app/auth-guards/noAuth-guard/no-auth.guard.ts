@@ -11,7 +11,7 @@ export class NoAuthGuard implements CanActivate {
               private storageService: StorageService) { } // Inject StorageService
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    if (this.storageService.hasToken()) { // Use instance method
+    if (this.storageService.hasToken()) {
       this.router.navigateByUrl("/user/dashboard");
       return false;
     }

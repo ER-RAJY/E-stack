@@ -6,7 +6,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { StorageService } from "../../../auth-services/storage-service/storage.service";
 import { AnswerService } from "../../user-service/answer-services/answer.service";
 import { MatDialog } from '@angular/material/dialog';
-import { EditAnswerComponent } from "../edit-answer/edit-answer.component";
 import Swal from "sweetalert2";
 
 @Component({
@@ -26,8 +25,10 @@ export class ViewsQuestionComponent implements OnInit {
   answers: any[] = [];
   displayButton: boolean = false;
   displayButtondelete: boolean = false;
-  searchQuestion: string = '';
-  searchTag: string = '';
+  keyword: string = '';
+  questions: any[] = [];
+  searchTerm:string='';
+
 
   constructor(
     private questionService: QuestionService,
@@ -38,6 +39,7 @@ export class ViewsQuestionComponent implements OnInit {
     private snackBar: MatSnackBar,
     private storageService: StorageService,
     private dialog: MatDialog
+
   ) { }
 
   ngOnInit() {
@@ -46,7 +48,18 @@ export class ViewsQuestionComponent implements OnInit {
     });
     this.getQuestionById();
   }
-
+  searchByTitleOrBody(query: string) {
+    const lowerCaseQuery = query.toLowerCase();
+    if (this.question) {
+      // Assuming question has title and body properties
+      if (!this.question.title.toLowerCase().includes(lowerCaseQuery) &&
+        !this.question.body.toLowerCase().includes(lowerCaseQuery)) {
+        // Logic to handle case when no match found (e.g., show a message)
+      } else {
+        // Logic for displaying matched results, if necessary
+      }
+    }
+  }
   getQuestionById() {
     this.questionService.getQuestionById(this.questionId).subscribe(
       data => {
@@ -167,28 +180,29 @@ export class ViewsQuestionComponent implements OnInit {
     }
   }
 
-  toEdit(answerId: number) {
-    const dialogRef = this.dialog.open(EditAnswerComponent, {
-      width: '400px',
-      data: { answerId: answerId }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.snackBar.open("Answer updated successfully", "Close", {
-          duration: 5000,
-        });
-        this.getQuestionById(); // Refresh the answers after edit
-      } else {
-        this.snackBar.open("Failed to update answer", "Close", {
-          duration: 5000,
-        });
-      }
-    });
-  }
+  // toEdit(answerId: number) {
+  //   const dialogRef = this.dialog.open(EditAnswerComponent, {
+  //     width: '400px',
+  //     data: { answerId: answerId }
+  //   });
+  //
+  //   dialogRef.afterClosed().subscribe(result => {
+  //     if (result) {
+  //       this.snackBar.open("Answer updated successfully", "Close", {
+  //         duration: 5000,
+  //       });
+  //       this.getQuestionById(); // Refresh the answers after edit
+  //     } else {
+  //       this.snackBar.open("Failed to update answer", "Close", {
+  //         duration: 5000,
+  //       });
+  //     }
+  //   });
+  // }
 
   approuveAnswer(answerId: number) {
-    this.answerService.approuveAnswer(answerId).subscribe((res) => {
+    this.answerService.approuveAnswer(answerId).subscribe(
+      (res) => {
       console.log(res);
       if (res.id != null) {
         const hasApprovedAnswer = this.answers.find(answer => answer.id === answerId);
@@ -258,5 +272,6 @@ export class ViewsQuestionComponent implements OnInit {
       }
     });
   }
+
 
 }

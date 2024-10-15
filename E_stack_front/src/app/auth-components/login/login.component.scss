@@ -1,3 +1,4 @@
+/* Base styles */
 .login-container {
   display: flex;
   justify-content: center;
@@ -91,4 +92,17 @@ p {
 .login-image img {
   max-width: 80%;
   margin-top: 20px;
+}
+
+/* Media query for mobile */
+@media (max-width: 768px) {
+  .login-card {
+    flex-direction: column; /* Stack the form and image vertically */
+    width: 100%;
+    height: auto;
+  }
+
+  .login-image {
+    display: none; /* Hide the image section on mobile */
+  }
 }

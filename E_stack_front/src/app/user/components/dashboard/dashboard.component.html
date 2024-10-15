@@ -33,8 +33,13 @@
         </div>
       </ng-template>
       <div class="pagination">
-        <mat-paginator [length]="total" [pageIndex]="pageNumber" [pageSize]="5"
-                       (page)="pageIndexChange($event)"></mat-paginator>
+        <mat-paginator [length]="total"
+                       [pageIndex]="pageNumber"
+                       [pageSize]="pageSize"
+                       [pageSizeOptions]="[5, 10, 20]"
+                       (page)="pageIndexChange($event)">
+        </mat-paginator>
+
       </div>
     </div>
   </div>

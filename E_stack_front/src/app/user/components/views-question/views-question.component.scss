@@ -124,6 +124,7 @@ img {
 
   mat-icon {
     margin-right: 8px;
+    color: #4CAF50;
   }
 }
 
@@ -143,6 +144,8 @@ img {
 
   mat-icon {
     vertical-align: middle;
-    font-size: inherit; // Ensure the icon takes the font size from the parent
+    font-size: inherit;
+    color: #4CAF50;
+
   }
 }

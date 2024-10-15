@@ -23,12 +23,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 // Components
 import { LoginComponent } from './auth-components/login/login.component';
-import { AdminModule } from "./admin/admin.module"; // Ensure the correct path
+import { AdminModule } from "./admin/admin.module";
+import {MatPaginatorModule} from "@angular/material/paginator";
+import { TestComponent } from './test/test.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
+    TestComponent,
   ],
   imports: [
     BrowserModule,
@@ -43,6 +46,7 @@ import { AdminModule } from "./admin/admin.module"; // Ensure the correct path
     MatFormFieldModule,
     MatCardModule,
     MatButtonModule,
+    MatPaginatorModule, // You can keep this or remove it if not needed
     MatInputModule,
     MatSnackBarModule,
     MatIconModule,

@@ -1,10 +1,13 @@
-<!-- Question Card -->
 <div class="question-card" style="margin-top: 30px;" *ngIf="question">
+
+  <!-- Search Input Field -->
+
+
+
   <h2 class="question-title">{{ question.title }}</h2>
   <p>
     Asked On: <b>{{ question.createdDate | date: 'dd, MM, YYYY' }}</b>
     By: <b>{{ question.username }}</b>
-    Viewed: <b>{{ question.views }}</b> times
   </p>
 
   <div class="vote-section">
@@ -33,37 +36,30 @@
   <div *ngFor="let answer of answers; let i = index;" class="answer-card" style="margin-top: 30px;">
     <h2>Answer</h2>
 
-    <!-- Approved Answer Check -->
     <div class="approved-icon" *ngIf="answer.approved">
-      <mat-icon>check_circle</mat-icon> <!-- Check icon when approved -->
+      <mat-icon>check_circle</mat-icon>
     </div>
 
     <div>
       <h5 class="answered">
-        Answered by: <b>{{ answer.username }}</b> {{" - "}}
-        Answered on: <b>{{ answer.createdDate | date: 'MMM d, y, h:mm a'}}</b>
+        Answered by: <b>{{ answer.username }}</b> {{" - "}} Answered on: <b>{{ answer.createdDate | date: 'MMM d, y, h:mm a'}}</b>
       </h5>
 
       <p>{{ answer.body }}</p>
 
-      <!-- Image Display -->
       <div *ngIf="answer.convertedImg">
         <img [src]="answer.convertedImg" height="200" alt="Answer Image"/>
       </div>
 
       <hr>
 
-      <!-- Approve Button -->
-      <div *ngIf="!answer.isApproved && displayButton">
+      <div *ngIf="!answer.approved && displayButton">
         <button mat-raised-button (click)="approuveAnswer(answer.id)" color="primary">Approve Answer</button>
       </div>
 
       <div class="button-section" *ngIf="answer.displayDeleteButton">
-        <button mat-button color="primary" (click)="toEdit(answer.id)">Edit</button>
         <button mat-button color="warn" (click)="deleteAnswer(answer.id)">Delete</button>
       </div>
-
-
     </div>
   </div>
 
@@ -81,9 +77,9 @@
         <div class="image-preview" *ngIf="selectedFile">
           <img [src]="imagePreview" height="50" alt="Image Preview">
         </div>
-        <input id="file" type="file" accept="image/png, image/jpeg" (change)="onFileSelected($event)">
+        <input id="file" type="file" accept="image/png, image/jpeg" (change)="onFileSelected($event)" #fileInput>
       </div>
-      <button mat-raised-button color="accent" [disabled]="validateForm.invalid">Post Your Answer</button>
+      <button mat-raised-button color="primary" type="submit">Submit Answer</button>
     </form>
   </div>
 </div>
